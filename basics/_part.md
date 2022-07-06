@@ -1,21 +1,21 @@
-# The Basics
+# Основы
 
-## Overview {.unlisted .unnumbered}
+## Обзор {.unlisted .unnumbered}
 
-In this part, we explain a number of basic concepts that will be referred to in later chapters. For a more thorough and structured introduction to Bitcoin, consider reading _Mastering Bitcoin_ by Andreas M. Antonopoulos,^[<https://www.oreilly.com/library/view/mastering-bitcoin/9781491902639/>] or _Grokking Bitcoin_ by Kalle Rosenbaum.^[<https://www.manning.com/books/grokking-bitcoin>] However, these books aren’t required reading to follow along with this book.
+В этой части мы объясним ряд основных понятий, которые будут упоминаться в следующих главах. Чтобы получить более подробное и структурированное введение в биткоин, вы можете ознакомиться с _Mastering Bitcoin_ Андреаса М. Антонопулоса,^[<https://www.oreilly.com/library/view/mastering-bitcoin/9781491902639/>] или _Grokking Bitcoin_ Калле Розенбаума.^[<https://www.manning.com/books/grokking-bitcoin>] Однако для понимания данного текста прочтение этих книг не обязательно.
 
-In chapter @sec:address, we explain how a Bitcoin address isn’t something that exists on the blockchain, but rather is a convention used by wallet software to communicate where coins must be sent. We also explain how these addresses are encoded using base58, and more recently with bech32.
+В главе @sec:address мы объясняем, что биткоин-адрес — это не то, что лежит в блокчейне, а скорее соглашение, используемое программным обеспечением кошелька для указания, куда должны быть отправлены монеты. Мы также объясним, как эти адреса кодируются с использованием base58, а в последнее время и при помощи bech32.
 
-In chapter @sec:dns, we explain how, the very first time your Bitcoin node starts up, it finds peers to communicate with. You’ll also get a primer on Tor.
+В главе @sec:dns мы объясняем, как при первом запуске вашего биткоин-узла он находит одноранговые узлы для связи. Также вы получите краткое введение в
 
-Chapter @sec:segwit explains the 2017 SegWit soft fork and talks about how it increased the block size and paved the way toward the Lightning network by solving transaction malleability.
+В главе @sec:segwit рассказывается о софтфорке SegWit 2017 года и о том, как он позволил увеличить размер блока и проложил путь к появлению сети Lightning за счет повышения пластичности транзакций.
 
-Finally, chapter @sec:libsecp explains what libraries are, how they cause problems, and what happened with OpenSSL in particular.
+Наконец, глава @sec:libsecp объясняет, что такое библиотеки, как они вызывают проблемы и, в частности, что случилось с OpenSSL.
 
-### Reading Hints
+### Советы по чтению
 
-Each chapter contains a QR code that takes you to the corresponding podcast episode and its show notes. The episode number is shown below the QR code. You can also find the episode in your favorite podcasting application by searching for _Bitcoin, Explained_. Or, play it in your browser.^[<https://nadobtc.libsyn.com>]
+Каждая глава содержит QR-код, который позволяет перейти к соответствующему выпуску подкаста и примечаниям к нему. Номер эпизода указан под QR-кодом. Вы также можете найти эпизод в своем любимом приложении для подкастинга, выполнив поиск _Bitcoin, Explained_. Или воспроизведите ее в браузере.^[<https://nadobtc.libsyn.com>]
 
-There is a tiny QR code displayed next to each URL. These go through btcwip.com in order to keep them small. We won't track you.
+Рядом с каждым URL-адресом отображается маленький QR-код. Для сокращения адресов используется сервис btcwip.com. Мы не будем вас отслеживать.
 
-Throughout the text, there are many references to the Bitcoin Core node software and its built-in wallet. Appendix @sec:crime_on_testnet has some screenshots of it and shows a typical workflow for sending and receiving bitcoin.
+В тексте есть много ссылок на программное обеспечение узла Bitcoin Core и его встроенный кошелек. Приложение @sec:crime_on_testnet содержит несколько скриншотов и показывает типичный рабочий процесс отправки и получения биткоинов.
