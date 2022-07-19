@@ -33,21 +33,23 @@
 Адрес начинается с цифры 1, за которой следует хэш открытого ключа. Он закодирован с использованием некой сущности, называемой base58. Вот пример:
 `1HLoFgMiDL3hvACAfbkDUjcP9r9veUcqAF`
 
-### Base Systems Explained
+### Основания систем счисления
 
-To understand what base58 is, it’s important to first understand more about base systems in general.
+Чтобы понять, что такое base58, важно сначала узнать больше об основаниях систем счисления в целом.
 
-With base10, think about your hand. You have 10 fingers. So if you want to, for example, express the number 115 (1, 1, 5), you can make three gestures with your hands by showing 1, 1, and 5. That’s also how you write down numbers, which — since the invention of clay tablets and paper — is more convenient than using fingers. So base10 is a decimal system that uses 10 different symbols, in various combinations, to represent any number (integer).
+Base10 легко объяснить на примере вашей собственной руки. У вас 10 пальцев. Таким образом, если вы хотите, например, выразить число 115 (1, 1, 5), вы можете сделать три жеста руками, показывая 1, 1 и 5. Аналогичным образом вы записываете и числа, которые — начиная с изобретения глиняных табличек и бумаги — удобнее, чем счет на пальцах. Таким образом, base10 — это десятичная система, которая использует 10 различных символов в различных комбинациях для представления любого числа (целого числа).
 
-However, there have been — and still are — different bases. For example, the Babylonians^[<https://blogs.scientificamerican.com/roots-of-unity/ancient-babylonian-number-system-had-no-zero/>] used base60. And to read machine code, typically you’d use hexadecimal,^[<https://en.wikipedia.org/wiki/Hexadecimal>] which is base16 — 0 to 9, and then A to F. Meanwhile, computers tend to use base2 internally — a binary number system — because transistors are either on or off. This translates to using two digits, either 0 or 1, to do everything, and you can express any number that way.
+Однако существовали, да и сейчас существуют, иные системы счисления. Например, вавилоняне^[<https://blogs.scientificamerican.com/roots-of-unity/ancient-babylonian-number-system-had-no-zero/>] использовали основание 60. А для чтения машинного кода обычно используется шестнадцатеричный код^[<https://en.wikipedia.org/wiki/Hexadecimal>], который имеет основание 16 — от 0 до 9, а затем от A до F. Между тем, сами компьютеры, как правило, используют base2 — двоичную систему счисления — потому что транзисторы либо включены, либо выключены. Это означает, что все требуется делать с использованием двух цифр, либо 0, либо 1, и таким образом можно выразить любое число.
 
-Satoshi introduced^[<https://tools.ietf.org/id/draft-msporny-base58-01.html>] base58, which uses 58 different symbols: 0 through 9, and then most of the alphabet in both lowercase and uppercase. But there are some letters and numbers that are skipped because they’re ambiguous and users could easily mistake them for the wrong one — for example, the number 0 and the uppercase letter O, and capital I and lowercase l.
+Сатоши предложил систему ^[<https://tools.ietf.org/id/draft-msporny-base58-01.html>] base58, в которой используется 58 различных символов: от 0 до 9, а затем большая часть алфавита как в нижнем, так и в верхнем регистре. Но есть некоторые буквы и цифры, которые пропускаются, потому что они неоднозначны, и пользователи могут перепутать их друг с другом — например, цифра 0 и заглавная буква O, а также заглавная I и строчная l.
 
-Have you ever seen email source code for an attachment or similar? There are a lot of weird characters. That’s base64, and base58 is based on that. But base64 includes characters like underscores, plus, equals, and slash. These are omitted in base58 to make visual inspection easier and to behave nicely as part of a URL.
+Вы когда-нибудь видели исходный код вложенного в емэйл файла или чего-то подобного? Там много странных символов. Это base64, а base58 основана на ней. Но base64 включает в себя такие символы, как подчеркивание, плюс, равенство и косая черта. В base58 они опущены, для упрощения внешнего вида и корректности использования в качестве части URL.
 
-### Base58 and the Pay-to-Public-Key-Hash
+### Base58 и оплата по хэшу открытого ключа
 
 So how does this relate to P2PKH? Well, the address is expressed as a 1, followed by the public key hash, which is expressed in base58.
+
+Итак, как это связано с P2PKH? Все просто: адрес состоит из цифры 1, за которой следует хэш открытого ключа, записанный в системе base58.
 
 That’s the information you send to somebody else when you want them to send you bitcoin. You could also just send them 0x00,^[A pair of hexadecimal digits, prefixed by 0x, is often used to denote bytes, which contain 16 × 16 = 256 bits, so this represents one byte with the value 0.] and then the public key. And maybe they’d be able to interpret that, but probably not.
 
