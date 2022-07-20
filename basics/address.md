@@ -47,23 +47,21 @@ Base10 легко объяснить на примере вашей собств
 
 ### Base58 и оплата по хэшу открытого ключа
 
-So how does this relate to P2PKH? Well, the address is expressed as a 1, followed by the public key hash, which is expressed in base58.
-
 Итак, как это связано с P2PKH? Все просто: адрес состоит из цифры 1, за которой следует хэш открытого ключа, записанный в системе base58.
 
-That’s the information you send to somebody else when you want them to send you bitcoin. You could also just send them 0x00,^[A pair of hexadecimal digits, prefixed by 0x, is often used to denote bytes, which contain 16 × 16 = 256 bits, so this represents one byte with the value 0.] and then the public key. And maybe they’d be able to interpret that, but probably not.
+Это информация, которую вы отправляете кому-то другому, когда хотите, чтобы он отправил вам биткоины. Вы также можете просто отправить им 0x00,^ [Пара шестнадцатеричных цифр с префиксом 0x часто используется для обозначения байтов, которые содержат 16 × 16 = 256 бит, поэтому это представляет один байт со значением 0.], а затем открытый ключ. И, возможно, они смогли бы это корректно интерпретировать, но вряд ли.
 
-In theory, you could send somebody the Bitcoin script in hexadecimal, which is the format used on the blockchain, because that’s just binary information. The blockchain has this script that says, “If the person has the right public key hash and the public key belonging to this public key hash, then you can spend it.” To learn more about how Bitcoin scripts work, refer to chapter @sec:miniscript.
+Теоретически вы можете отправить кому-нибудь биткоин-скрипт в шестнадцатеричном формате, который используется в блокчейне, потому что это всего лишь двоичная информация. В блокчейне есть скрипт, который говорит: «Если у человека есть правильный хэш открытого ключа и открытый ключ, соответствующий этому хэшу открытого ключа, вы можете потратить эти монеты». Чтобы узнать больше о том, как работают биткойн-скрипты, обратитесь к главе @sec:miniscript.
 
-But even with all these options, the convention is that you use this standardized address format, which explains why all traditional Bitcoin addresses start with a 1, and why they’re all roughly the same length.
+Но даже при наличии всех этих вариантов соглашение заключается в том, что вы используете стандартизированный формат адреса, и это объясняет, почему все традиционные биткойн-адреса начинаются с 1 и почему они все примерно одинаковой длины.
 
-In addition to using base58 for sending a Bitcoin address, you can also use it to communicate a private key. In such a scenario, the leading symbol is a 5, which represents 128. That’s then followed by the private key.
+Помимо использования base58 для отправки биткоин-адреса, вы также можете использовать его для передачи закрытого ключа. В таком сценарии первым символом оказывается 5, что соответствует 128. Затем следует закрытый ключ.
 
-In the past, users had paper wallets they could print. And if they were generated securely without a back door, then on one side of the piece of paper would be something starting with a 1, and on the other side of the paper would be something starting with a 5. And then it specified that only the Bitcoin address should be shown, but the private key shouldn’t be shared.
+Раньше у пользователей часто были бумажные кошельки, которые они могли распечатать. И если они были сгенерированы надежно и без бэкдоров, то на одной стороне листа бумаги было что-то, начинающееся с 1, а на другой стороне что-то, начинающееся с 5. Предполагается, что только биткоин-адрес может быть показан посторонним, но закрытый ключ не должен разглашаться.
 
-There are also addresses that begin with a 3, which is for coins encumbered by the hash of a script, rather than the hash of a public key. We’ll cover Pay-to-Script-Hash (P2SH) in chapter @sec:miniscript. Usually these are multi-signature addresses, but they could also be SegWit addresses.^[As explained in chapter @sec:segwit, SegWit typically uses bech32 addresses. But it took a long time for all wallets and exchanges to support sending to bech32 addresses. To still take advantage of some of SegWit’s benefits, an address type that looks like regular P2SH to the sender was introduced, but it contains SegWit magic under the hood. This is called a P2SH-P2WPKH address: <https://bitcoincore.org/en/segwit_wallet_dev/>]
+Существуют также адреса, начинающиеся с 3, которые предназначены для монет, обремененных хэшем скрипта, а не хэшем открытого ключа. Мы рассмотрим платеж по хэшу скрипта (P2SH) в главе @sec:miniscript. Обычно это адреса с несколькими подписями, но они также могут быть адресами SegWit. ^ [Как объяснено в главе @sec:segwit, SegWit обычно использует адреса bech32. Но потребовалось много времени, чтобы все кошельки и биржи начали поддерживать отправку на адреса bech32. Чтобы немедленно начать пользоваться некоторыми преимуществами SegWit, был введен тип адреса, который выглядит для отправителя как обычный P2SH, но содержит под капотом магию SegWit. Это называется адресом P2SH-P2WPKH: <https://bitcoincore.org/en/segwit_wallet_dev/>]
 
-Although base58 addresses worked fine, there was room for improvement. And this came in the form of bech32.
+Хотя адреса base58 работали нормально, их можно было улучшить. И это улучшение пришло в виде bech32.
 
 ### Along Came Bech32
 
