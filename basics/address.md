@@ -63,11 +63,11 @@ Base10 легко объяснить на примере вашей собств
 
 Хотя адреса base58 работали нормально, их можно было улучшить. И это улучшение пришло в виде bech32.
 
-### Along Came Bech32
+### А вот и Bech32
 
-In March of 2017, Pieter Wuille spoke about a new address format,^[<https://www.youtube.com/watch?v=NqiN9VFE4CU>] bech32, and it’s been used since SegWit arrived on the scene. As the name suggests, it’s a base32 system, which means you have almost all the letters, and almost all the numbers, minus some ambiguous characters that you don’t want to have because they look too much like other numbers or letters.
+В марте 2017 года Питер Вуилле объявил о новом формате адреса, ^[<https://www.youtube.com/watch?v=NqiN9VFE4CU>] bech32, который используется с момента появления SegWit. Как следует из названия, это система base32, что означает, что у вас есть почти все буквы и почти все цифры, за исключением некоторых неоднозначных символов, которые не нужны, потому что они слишком похожи на другие цифры или буквы.
 
-One of the biggest differences between bech32 and base58 is that there isn’t a mixture of uppercase and lowercase letters. Instead, each letter is only in there once — either in all uppercase or all lowercase — which makes reading things out loud much easier. The precise mapping of which letter or number corresponds to which value is, like in base58, fixed but arbitrary: The fact that P means 0 and Q means 1 has no deeper meaning.
+Одно из самых больших различий между bech32 и base58 заключается в том, что в новом формате нет комбинации прописных и строчных букв. Вместо этого каждая буква встречается там только один раз — либо в верхнем, либо в нижнем регистре — что значительно упрощает чтение вслух. Точное сопоставление того, какая буква или цифра соответствует какому значению, фиксировано, как и в base58, но произвольно: тот факт, что P означает 0, а Q означает 1, не имеет более глубокого значения.
 
      0  1  2  3  4  5  6  7
 --- -- -- -- -- -- -- -- --
@@ -76,63 +76,63 @@ One of the biggest differences between bech32 and base58 is that there isn’t a
 +16  s	3  j  n	5	4  k  h
 +24  c	e  6  m	u	a  7  l
 
-Table: Bech32 mapping. E.g. `q` means zero, `3` means 17 (1 + 16)
+Таблица символов Bech32. Например, `q` означает ноль, `3` означает 17 (1 + 16)
 
-A bech32^[Bech32 spec (BIP 173): <https://en.bitcoin.it/wiki/BIP_0173>] address consists of two parts separated by 1, e.g.
-`bc1q9kdcd08adkhg35r4g6nwu8ae4nkmsgp9vy00gf`.
+Адрес bech32^[спецификация Bech32 (BIP 173): <https://en.bitcoin.it/wiki/BIP_0173>] состоит из двух частей, разделенных символом "1", например, `bc1q9kdcd08adkhg35r4g6nwu8ae4nkmsgp9vy00gf`.
 
-<!-- The phrasing "e.g." ensures that the address doesn't exceed the right page margin -->
+<!-- Фраза "например" гарантирует, что адрес не выходит за правое поле страницы -->
 
-The first part is intentionally human readable, e.g. “bc” (Bitcoin) or “lnbc” (the Lightning network on Bitcoin). The values represented by “b,” “c,” etc. have no meaning. Rather, they’re there so humans can recognize, “OK, if the address starts with bc, then it refers to Bitcoin as the currency.” However, wallets will look for the presence of these values as a confidence check, and it’s included in the checksum.
+Первая часть намеренно удобочитаема для человека, например. «bc» (биткоин) или «lnbc» (сеть Лайтнинг на Биткоине). Конкретный смысл символов «b», «c» и т. д., не имеет значения. Скорее, они там для того, чтобы люди могли понять: «Хорошо, если адрес начинается с bc, то он относится к Биткоину как к валюте». Однако кошельки будут искать наличие этих символов в качестве проверки достоверности, и они включаются в контрольную сумму.
 
-The 1 is just a separator with no value. And if you look at the 32 numbers, 1 isn’t included — it means “skip this.”
+1 - это просто разделитель без значения. И если вы посмотрите на 32 числа в таблице, "1" там отсутствует — так что этот символ в адресе просто пропускается.
 
-The second part starts with the SegWit version number. Version 0 is represented with Q (bc1q…) — see chapter @sec:segwit. Version 1 is what we call Taproot (see part @sec:taproot), as it’s represented with “P” (bc1p…). For version 0 SegWit, the version number is followed by either 20 bytes or 32 bytes, which means it’s either the public key hash or the script hash, respectively. And they’re different lengths now, because SegWit uses the SHA-256 hash (32 bytes) of the script, rather than the RIPEMD160 hash (20 bytes) of the script.
+Вторая часть адреса начинается с номера версии SegWit. Версия 0 представлена Q (bc1q…) — см. главу @sec:segwit. Версия 1 — это то, что мы называем Taproot (см. главу @sec:taproot), так как она представлена буквой «P» (bc1p…). Для SegWit версии 0 за номером версии следуют либо 20, либо 32 байта, что означает либо хэш открытого ключа, либо хэш скрипта соответственно. И теперь они разной длины, потому что SegWit использует хеш-функцию SHA-256 (32 байта), а не RIPEMD160 (20 байт).
 
-In base58, the script hash is the same length as the public key hash. But in SegWit, they’re not the same length. So by looking at how long the address is, you immediately know whether you’re paying to a script or you’re paying to a public key hash. As an aside, Taproot removes this length distinction, thereby slightly improving privacy.
+В base58 хэш скрипта имеет ту же длину, что и хэш открытого ключа. Но в SegWit они не одинаковой длины. Таким образом, глядя на длину адреса, вы сразу понимаете, идет ли речь об оплате по хэшу скрипта или по хэшу открытого ключа. Впрочем, Taproot убирает это различие по длине, тем самым немного улучшая конфиденциальность.
 
-So the new part is that there’s a set of 32 characters, but otherwise, things are very similar to base58. It’s again saying, “OK, here’s a P2PK address.” In this case, it’s a Pay-to-Witness-Public-Key-Hash (P2WPKH), where witness refers to SegWit, but it’s the same idea. There’s a short prefix that tells both humans and the computer what the address is about, and this is followed by the hash of the public key or script.
+Итак, новизна заключается в том, что теперь алфавит содержит 32 символа, но в остальном все очень похоже на base58. Мы снова видим: «ОК, вот адрес P2PK». В данном случае это платеж по хэшу открытого ключа свидетельства (P2WPKH), где свидетельство относится к SegWit, но идея та же. Существует короткий префикс, который сообщает как человеку, так и компьютеру, о какого типа адресе речь, а за ним следует хэш открытого ключа или скрипта.
 
-### Thirty-Two Dimensional Darts
+### Игра в дартс в тридцати двух измерениях
 
-However, conciseness isn’t the only benefit here. Another is error correction, or at least detection.
+Однако лаконичность здесь не единственное преимущество. Другой — исправление ошибок или, по крайней мере, их обнаружение.
 
-If there’s a typo in an address, then in the worst case scenario, you’re sending coins to the wrong hash of a public key. When the recipient tries to spend the coin, they reveal the public key, but due to the typo, its hash won’t match what the blockchain demands. The coins are forever lost.
+Если в адресе опечатка, то в худшем случае вы отправляете монеты не на тот хэш открытого ключа. Когда получатель пытается потратить монету, он раскрывает открытый ключ, но из-за опечатки его хэш не будет соответствовать тому, что требует блокчейн. Монеты оказываются навсегда потеряны.
 
-Fortunately, base58 addresses contain a checksum at the end. That way, if you make a typo, the checksum at the end of the address won’t work. Your wallet will alert you to this, and it’ll refuse to send the transaction (the blockchain won’t protect you; only your wallet will, hopefully). But if you’re really unlucky, a typo can be such that it produces a correct checksum by sheer coincidence.
+К счастью, адреса base58 содержат в конце контрольную сумму. Таким образом, если вы сделаете опечатку, контрольная сумма в конце адреса не сработает. Ваш кошелек предупредит вас об этом и откажется отправлять транзакцию (блокчейн не защитит вас; это сможет сделать только ваш кошелек, хочется в это верить). Но если вам действительно не повезло, опечатка может быть такой, что она по чистому совпадению даст правильную контрольную сумму.
 
-Bech32 was designed in such a way to make such a disastrous coincidence extremely unlikely. In addition, it won’t just tell you that there _is_ a typo; it can tell you _where_ the typo is. This is determined by taking all the bytes from the address and then hashing it using some sophisticated mathematical magic.^[Math behind bech32 addresses: <https://medium.com/@MeshCollider/some-of-the-math-behind-bech32-addresses-cf03c7496285>] You can make about four typos and it’ll still know where the typo is and what the real value is. If you do more than that, it won’t.
+Формат Bech32 был разработан таким образом, чтобы сделать подобное катастрофическое совпадение крайне маловероятным. Кроме того, он не просто скажет вам, что _есть_ опечатка; он может сказать вам, _где_ опечатка. Это определяется путем извлечения всех байтов из адреса, а затем их хеширования с использованием сложной математической магии^[Математика формата адресов bech32: <https://medium.com/@MeshCollider/some-of-the-math-behind-bech32-addresses-cf03c7496285>]. Вы можете сделать около четырех опечаток, и он все равно будет знать, где опечатка и каково реальное значение. Если вы сделаете больше, фокус уже не пройдет.
 
-To illustrate this conceptually, it’s like if you have a wall and you draw a bunch of non-overlapping circles on it. The bullseye of each circle represents a correct value, whereas any other spot within the circle represents a typo. If you’re a good dart player, most of the time you’ll hit the bullseye, i.e. you typed the correct value. If you slightly miss the bullseye but you’re still within that big circle, the value will be slightly incorrect. Error _detection_ is knowing that you missed the bullseye. Error _correction_ is the equivalent of moving the dart to the nearest bullseye.
+В качестве иллюстрации концепции, представьте, что у вас есть стена, и вы рисуете на ней множество неперекрывающихся мишеней. Центра каждой мишени представляет собой правильное значение, тогда как любое другое место мишени представляет собой опечатку. Если вы хорошо играете в дартс, в большинстве случаев вы будете попадать в центр, то есть вы вводите правильное значение. Если вы немного промахнетесь, но все еще попадете в мишень, значение будет немного неверным. _Распознавание_ ошибки - это когда вы знаете, что не попали в яблочко. _Исправление_ ошибки эквивалентно перемещению дротика в ближайший центр мишени.
 
-The idea there is you want the circles to be as big as possible, to facilitate even the sloppiest dart thrower, but you don’t want to waste too much space. Similarly, we don’t want Bitcoin addresses to be hundreds of characters long. That’s the kind of optimization problem mathematicians love.
+Идея заключается в том, что вы хотите, чтобы круги были как можно больше, чтобы облегчить задачу даже самому небрежному метателю дротиков, но вы не хотите тратить слишком много места. Точно так же мы не хотим, чтобы биткоин-адреса состояли из сотен символов. Математики любят такие задачи оптимизации.
 
-In the case of bech32, instead of a two-dimensional wall, you have to somehow imagine a 32-dimensional “wall” with 32-dimensional hyperspheres. You’re hitting your keyboard, and somewhere in that 32-dimensional space, you’re slightly off, but you’re still inside this hypersphere, whatever that might look like. In that case, your wallet knows where the mistake is, and it prevents you from sending coins into the ether.^[Pardon the pun, but early Ethereum wallets didn’t use error detection, because their address standard lacked a checksum. Although EIP 55 introduced such a checksum in 2016, not all wallets enforced it. Even in late 2017, people lost coins due to typos: <https://bitcointalk.org/index.php?topic=2161699.0>]
+В случае с bech32 вместо двумерной стены нужно как-то представить себе 32-мерную «стену» с 32-мерными гиперсферами. Вы нажимаете на клавиатуру, и где-то в этом 32-мерном пространстве вы немного отклоняетесь, но вы все еще внутри этой гиперсферы, как бы она ни выглядела. В этом случае ваш кошелек знает, где ошибка, и не позволяет вам отправить монеты в эфир. ^[Простите за каламбур, но ранние кошельки Ethereum не использовали обнаружение ошибок, потому что в их стандарте адреса отсутствовала контрольная сумма. Хотя EIP 55 ввел такую контрольную сумму в 2016 году, не все кошельки ее применяли. Даже в конце 2017 года люди теряли монеты из-за опечаток: <https://bitcointalk.org/index.php?topic=2161699.0>]
 
-### But… There’s a Problem
 
-In 2019 it was discovered that, if a bech32 address ends with a P, then if you accidentally add one or more Qs to it, it still will match the checksum, and you won’t be told there’s a typo. In turn, your software would think it’s correct, you’d be sending money to the wrong address, and it would be unspendable, as we explained above.
+### Но... есть проблема
 
-The good news is that bech32 was only used for SegWit, and SegWit addresses were constrained — they had to be either 20 bytes or 32 bytes. So luckily, if you add another Q to a 20- or 32-byte address, then its length would be invalid. Your wallet would detect this and refuse to send coins. A similar size constraint was considered for Taproot, but thanks to the solution below, it wasn’t needed. A flexible length makes future improvements to Taproot easier.
+В 2019 году было обнаружено, что если адрес bech32 заканчивается на P, то если вы случайно добавите к нему один или несколько Q, он все равно будет соответствовать контрольной сумме, и вам не сообщат об опечатке. В свою очередь, ваше программное обеспечение будет думать, что все правильно, вы будете отправлять деньги на неправильный адрес, и их нельзя будет потратить, как объяснялось выше.
 
-### Enter Bech32m
+Хорошая новость заключается в том, что bech32 использовался только для SegWit, а адреса SegWit ограничены по формату — они должны быть длиной либо 20, либо 32 байта. Так что, к счастью, если вы добавите еще один Q к 20- или 32-байтовому адресу, тогда его длина будет некорректной. Ваш кошелек обнаружит это и откажется отправлять монеты. Аналогичное ограничение по размеру рассматривалось для Taproot, но благодаря решению, которое будет приведено ниже, оно не понадобилось. Гибкая длина упрощает будущие усовершенствования Taproot.
 
-<!-- Colon intentionally omitted so footnote fits on one line -->
-To fix this bug, a new standard called bech32m was proposed.^[Bech32m spec (BIP 350) <https://en.bitcoin.it/wiki/BIP_0350>] It’s actually a very simple change. It adds one extra number to the bech32 checksum math, which then makes sure no extra characters can be added without causing an invalid checksum.
+### Введение Bech32m
 
-The new standard is only used for Taproot and future addresses. For SegWit, nothing changes, because it’s already protected by the 20- or 32-byte length constraint. At the time of writing, most wallet software supports the new bech32m standard.
+<!-- Двоеточие намеренно опущено, поэтому сноска умещается на одной строке -->
+Чтобы исправить эту ошибку, был предложен новый стандарт под названием bech32m.^[Спецификация Bech32m (BIP 350) <https://en.bitcoin.it/wiki/BIP_0350>] В сущности, это очень простое изменение. Оно добавляет одно дополнительное число к формуле контрольной суммы bech32, и это гарантирует, что никакие дополнительные символы не могут быть добавлены, не приводя к появлению недопустимой контрольной суммы.
 
-### How I Learned to Stop Worrying and Love Quantum
+Новый стандарт используется только для адресов Taproot и тех, что еще могут быть введены в будущем. Для SegWit ничего не меняется, потому что он уже защищен ограничением длины в 20 или 32 байта. На момент написания статьи большинство программ для кошельков поддерживали новый стандарт bech32m.
 
-As an aside, Pay-to-Public-Key-Hash (P2PKH) was thought to be safer against quantum attacks, because you didn’t have to say which public key you had. The downside was that the hash consumed more block space — but this wasn’t an issue back then, because blocks were nowhere near full.
+### Как я научился не волноваться и полюбил квантовые компьютеры
 
-Many people are worried that quantum computers will eventually break the security offered by Bitcoin’s cryptography, allowing future quantum hackers to steal coins, potentially crashing the market if they steal millions.
+Помимо прочего, считалось, что метод оплаты по хэшу публичного ключа (P2PKH) лучше защищен против квантовых атак, потому что вам не нужно сообщать свой открытый ключ. Недостатком было то, что хеш занимал больше места в блоках, но тогда это не было проблемой, потому что блоки были далеко не заполнены.
 
-The problem is that, despite widespread P2PKH use, there’s 5 to 10 million BTC out there for which the public key is already known. The irony is that because so much BTC is already vulnerable to quantum theft, there’s no use trying to protect the rest. Even if your coins won’t be stolen, they’ll be worthless from the price crash.
+Многие люди обеспокоены тем, что квантовые компьютеры в конечном итоге сломают безопасность, обеспечиваемую криптографией Биткоина, что позволит будущим квантовым хакерам красть монеты, и если они украдут миллионы, это может привести к краху рынка.
 
-The (un)likeliness of such quantum troubles in the near future, as well as possible countermeasures, is explained in two _What Bitcoin Did_ podcast episodes — with physicist Stepan Snigirev^[<https://www.whatbitcoindid.com/podcast/the-quantum-threat-to-bitcoin-with-quantum-physicist-dr-stepan-snigirev>] and mathematician Andrew Poelstra.^[<https://www.whatbitcoindid.com/podcast/andrew-poelstra-on-schnorr-taproot-graft-root-coming-to-bitcoin>]
+Проблема в том, что, несмотря на широкое использование P2PKH, существует от 5 до 10 миллионов BTC, для которых уже известен открытый ключ. Ирония заключается в том, что, поскольку так много BTC уже уязвимо для квантовой кражи, нет смысла пытаться защитить остальные. Даже если ваши монеты не будут украдены, они обесценятся из-за обвала цен.
 
-Block space is much scarcer now, so not having to put public key hashes on precious block space would save users fees. This is why in the new Taproot soft fork (see part @sec:taproot), Bitcoin addresses are P2PK again.[^rationale][^tweet] Note that the use of Taproot addresses isn’t mandatory, so if you don’t agree with the above reasoning, you can simply choose to not use Taproot.
+(Не)вероятность таких квантовых проблем в ближайшем будущем, а также возможные контрмеры объясняются в двух выпусках подкаста _Что сделал Биткойн_ — с физиком Степаном Снигиревым^[<https://www.whatbitcoindid.com/podcast/the-quantum-threat-to-bitcoin-with-quantum-physicist-dr-stepan-snigirev>] и математиком Эндрю Поэлстрой.^[<https://www.whatbitcoindid.com/podcast/andrew-poelstra-on-schnorr-taproot-graft-root-coming-to-bitcoin>]
 
-[^rationale]: Full rationale in BIP 341: <https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#cite_note-2>
+Пространства в блоках сейчас намного меньше, поэтому отсутствие необходимости помещать хэши открытых ключей в драгоценное пространство в блоках сэкономило бы пользователям деньги на комиссии. Вот почему в новом софтфорке Taproot (см. часть @sec:taproot) биткоин-адреса снова являются имеют формат P2PK.[^rationale][^tweet] Обратите внимание, что использование адресов Taproot не является обязательным, поэтому, если вы не согласны с приведенным выше рассуждением, вы можете просто отказаться от использования Taproot.
+
+[^rationale]: Полное обоснование в BIP 341: <https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#cite_note-2>
 [^tweet]: <https://twitter.com/pwuille/status/1409560741489778688>
