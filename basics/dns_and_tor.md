@@ -1,17 +1,19 @@
 \newpage
-## DNS Bootstrap and Tor V3 {#sec:dns}
+## DNS Bootstrap и Tor V3 {#sec:dns}
 
 \EpisodeQR{13}
 
-Bitcoin Core 0.21 added support for Tor V3 addresses in 2020.^[<https://github.com/bitcoin/bitcoin/pull/19954>] This chapter will explain what this means and why it matters. It’ll also discuss how new Bitcoin nodes find existing Bitcoin nodes when they bootstrap to the network.
+В Bitcoin Core 0.21 в 2020 году добавлена поддержка адресов Tor V3.^[<https://github.com/bitcoin/bitcoin/pull/19954>] В этой главе объясняется, что это значит и почему это важно. Также будет обсуждаться, как новые биткоин-узлы находят существующие биткоин-узлы при первичной загрузке в сеть.
 
-### How Does Tor Work?
+### Как работает Tor?
 
-When you see a Tor address,^[e.g. <https://bitcoincore.org> can also be reached using a Tor browser at <http://6hasakffvppilxgehrswmffqurlcjjjhd76jgvaqmsg6ul25s7t3rzyd.onion/>] it looks quite weird. That’s because it’s not a human readable name like a domain, but rather a public key that refers to a hidden service somewhere on the internet. The way you communicate to that hidden service isn’t directly — because you don’t know its IP address — but rather indirectly, through the Tor network.
+Когда вы видите адрес Tor, ^[например, на сайт <https://bitcoincore.org> также можно попасть и с помощью браузера Tor по адресу <http://6hasakffvppilxgehrswmffqurlcjjjhd76jgvaqmsg6ul25s7t3rzyd.onion/>], он выглядит довольно странно. Дло в том, что это не удобочитаемое имя, такое как домен, а скорее открытый ключ, который соответствует скрытому сервису где-то в Интернете. Поскольку вы не знаете его IP-адреса, то вы общаетесь с этим скрытым сервисом не напрямую, а косвенно, через сеть Tor.
 
-Tor (short for The Onion Router) is an onion network, in which messages are passed around the network through multiple hops (or servers), with each hop peeling off one encrypted layer, like an onion. The last hop sends a message to the final destination, which peels off the final encryption layer that reveals the actual message. This makes it easy to maintain anonymity and security.
+Tor (сокращение от The Onion Router) — это луковичная сеть, в которой сообщения передаются по сети через несколько переходов (или серверов), при этом каждый переход снимает с сообщения один зашифрованный слой, как с луковицы. Последний переход отправляет сообщение в конечный пункт назначения, который снимает последний слой шифрования, раскрывающий фактическое сообщение. Это позволяет легко поддерживать анонимность и безопасность.
 
 To connect, you use the Tor browser.^[<https://www.torproject.org/download/>] This browser constructs onion packages for you. The messages are just the usual things browsers communicate: asking for an HTML document or image, and, in the other direction, receiving said document or image. The Tor browser first creates a message, which goes on the inside.^[It’s slightly more complicated: To protect the privacy of the recipient, the sender only wraps onions up until a rendezvous hop, which then forwards the message.] It wraps another message around it — which only the last hop before the hidden service can read — with instructions about where the final destination is. It then wraps another message with instructions for the second-to-last hop on how to reach the last hop, and so forth and so on.
+
+Для подключения вам нужно использовать браузер Tor.^[<https://www.torproject.org/download/>] Этот браузер создает луковые пакеты. Сообщения в них — это обычные вещи, которыми обмениваются браузеры: скажем, запрос HTML-документа или изображения и, в обратном направлении, получение указанного документа или изображения. Браузер Tor сначала создает сообщение, которое упаковывается внутрь пакета. ^ [По факту все немного сложнее: чтобы защитить конфиденциальность получателя, отправитель только упаковывает лук до прыжка рандеву, который затем пересылает сообщение.] Он упаковывает другое. сообщение вокруг него, которое может прочитать только последний переход перед скрытой службой, с инструкциями о том, где находится конечный пункт назначения. Затем он заключает в оболочку другое сообщение с инструкциями для предпоследнего прыжка о том, как достичь последнего прыжка, и так далее, и так далее.
 
 Under the hood, this process uses IP addresses, but you don’t know the IP address of the destination Tor node you’re communicating with. Instead, you’re communicating with other Tor nodes, and each of those nodes communicates with its direct peers. So, everyone only knows the IP addresses of their direct peers, but they don’t know where a message originated from or where it ends up. Additionally, they can’t read the message because it’s encrypted.
 
