@@ -25,74 +25,77 @@ Segregated Witness (разделённое свидетельство), такж
 
 В рамках протокола Lightning два человека отправляют деньги на общий адрес, и единственный способ получить деньги с этого адреса — использовать специальную транзакцию, которую обе стороны подписали _до того_, как они отправили деньги на общий адрес. Вы не хотите, чтобы кто-то подправлял транзакцию, которая идет на этот адрес, потому что тогда вы больше не сможете потратить эти деньги — или, пожалуй, сможете, но вы оба должны подписать ее заново. Это потенциально дает одной стороне возможность шантажировать другую под угрозой не дать вернуть свою справедливую долю монет.
 
-### Solving Transaction Malleability
+### Устранение пластичности транзакций
 
-So it’s easy to see how much of an issue this was.
+Так что легко понять, насколько это было проблемной темой.
 
-A transaction consists of all the transaction data and the signature. It’s identified by the transaction ID, which, before SegWit, was the hash of those two things. For example, the 10 BTC transaction from Satoshi to Hal Finney is f4184fc5…^[f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16 <https://bitcointalk.org/index.php?topic=155054.0>]
+Транзакция состоит из всех данных транзакции, а также подписи. Она идентифицируется по идентификатору транзакции, который до SegWit был хешем от этих двух вещей. Например, транзакция на 10 BTC от Сатоши Хэлу Финни выглядит следующим образом: f4184fc5…^[f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16 <https://bitcointalk.org/index.php?topic=155054.0>]
 
-However, because the signature can be tweaked, the hash (transaction ID) can also be tweaked, and you end up with basically the same transaction but with a different transaction ID. That’s the problem that needed to be solved: somehow either making sure the signature can’t be modified, or that such a modification won’t change the transaction hash. The first approach appears to be very difficult if not impossible,^[<https://en.bitcoin.it/wiki/BIP_0062>] so SegWit involves the second approach.
+Однако, поскольку подпись может быть подправлена, хэш (идентификатор транзакции) также будет при этом подправлен, и вы получите в целом ту же транзакцию, но с другим идентификатором. Вот эту проблему и нужно было решить: либо сделать так, чтобы подпись нельзя было изменить, либо так, чтобы такая модификация не изменяла хэш транзакции. Первый подход кажется очень сложным, если не невозможным,^[<https://en.bitcoin.it/wiki/BIP_0062>], поэтому SegWit использует второй подход.
 
-The solution was to append the signature to the end of a transaction. This new transaction part isn’t included when calculating the identifier hash. It’s also not given to old nodes. As far as old nodes are concerned, the signature is empty and anyone can spend the transaction.^[
-To be more precise: The `scriptSig` is empty, where before it would’ve put a public key and signature on the stack. In turn, the `scriptPubKey` is a `0` followed by a public key hash. To old nodes, this combination results in a non-zero item on the stack, i.e. `True`, which is a valid spend. On the other hand, SegWit-enabled nodes will interpret the `scriptPubKey` as a SegWit v0 program and use the new `witness` field when evaluating. See <https://en.bitcoin.it/wiki/BIP_0141>
-] Because the new signature part isn’t included in the transaction hash, its identifier doesn’t change when the signature changes. Both new nodes, which have the signature, and old nodes which don’t, can calculate the transaction ID and it’s identical for both.
+Решение состояло в том, чтобы добавить подпись в конец транзакции. Эта новая часть транзакции не учитывается при вычислении хэша идентификатора. Старые узлы также ее не получают. С их точки зрения подпись оказывается пуста, и транзакцию может провести кто угодно.^[
+Точнее: `scriptSig` пуст, тогда как раньше он поместил бы в стек публичный ключ и подпись. В свою очередь, `scriptPubKey` представляет собой `0`, за которым следует хэш открытого ключа. Для старых узлов эта комбинация приводит к ненулевому элементу в стеке, т. е. «True», что означает корректную трату. С другой стороны, узлы с поддержкой SegWit будут интерпретировать `scriptPubKey` как программу SegWit v0 и использовать при валидации транзакции новое поле `witness`. См. <https://en.bitcoin.it/wiki/BIP_0141>.
+] Поскольку новая часть подписи не включается в хэш транзакции, при изменении подписи идентификатор не меняется. И новые узлы, у которых есть подпись, и старые узлы, у которых ее нет, могут вычислять идентификатор транзакции, и он идентичен для обоих.
 
-In short, SegWit solved the transaction malleability issue, where transaction IDs could be altered without invalidating the transactions themselves. In turn, solving the transaction malleability issue enabled second-layer protocols like the Lightning network.
+Короче говоря, SegWit решил проблему пластичности транзакций, когда идентификаторы транзакций можно было изменить, не аннулируя сами транзакции. В свою очередь, решение проблемы пластичности транзакций позволило использовать протоколы второго уровня, такие как сеть Lightning.
 
-### SegWit as a Soft Fork
+### SegWit как софтфорк
 
-How could SegWit be deployed as a soft fork (backward-compatible upgrade)? We’ll dive more deeply into how soft forks work in chapter @sec:taproot_activation, but the basic idea is that upgraded nodes are aware of the new rules, while un-upgraded nodes don’t perceive a violation of the rules.
+Как можно развернуть SegWit в качестве софтфорка (обновление с обратной совместимостью)? Мы более подробно рассмотрим, как работают софтфорки, в главе @sec:taproot_activation, но основная идея заключается в том, что обновленные узлы знают о новых правилах, в то время как необновленные узлы не воспринимают происходящее как нарушение правил.
 
-With SegWit this is achieved by appending data to the end of a block, kind of like a subblock, and not sending that data to legacy nodes. A hash of this data is added to the coinbase transaction^[The company Coinbase was named after this first transaction in a block, which creates coins out of nowhere and pays the miner their reward.] in an `OP_RETURN` statement.
+С помощью SegWit это достигается путем добавления данных в конец блока, этаким подблоком, а не отправки этих дополнительных данных на устаревшие узлы. Хэш этих данных добавляется в транзакцию coinbase ^ [Компания Coinbase была названа в честь той самой первой транзакции в блоке, которая создает монеты из ниоткуда и выплачивает вознаграждение майнеру.] в операторе OP_RETURN.
 
-An `OP_RETURN` typically signifies that transaction verification is done, but it can be followed by text, which is then ignored. So old nodes just see an `OP_RETURN` statement, they don’t care what follows, and they won’t ask for the additional data. New nodes make an exception to this rule when it comes to the coinbase transaction, they do check the hash. A SegWit node verifies that the witness data is correct by comparing it to this hash. It also expects this extra data to be present, and will request it from other SegWit aware nodes if necessary.
+`OP_RETURN` обычно означает, что проверка транзакции выполнена, но за ним может следовать текст, который затем игнорируется. Таким образом, старые узлы просто видят оператор OP_RETURN, им все равно, что следует дальше, и они не будут запрашивать дополнительные данные. Новые узлы делают исключение из этого правила, и когда дело доходит до транзакции coinbase, они проверяют хеш. Узел SegWit проверяет, что свидетельства корректны, используя этот хеш. Он также ожидает наличия этих дополнительных данных и при необходимости будет запрашивать их у других узлов, поддерживающих SegWit.
 
-### Block Size Limit
+### Ограничение размера блока
 
-Before SegWit, blocks had a one-megabyte limit, and that limit included the transaction data, plus all the signatures, plus a little bit of block header data. Today, because SegWit transactions put their signature data in a separate place that old nodes won’t see, blocks can be larger. Theoretically, they can be up to four megabytes, but in practice with typical transactions, it’s closer to two and a half.
+До SegWit блоки имели ограничение по размеру в один мегабайт, и это ограничение включало данные транзакции, все подписи и немного данных заголовка блока. Сегодня, поскольку транзакции SegWit помещают свои подписи в отдельное место, которое старые узлы не увидят, блоки могут быть крупнее. Теоретически они могут оказываться до четырех мегабайт, но на практике при типичных транзакциях ближе к двум с половиной.
 
-Because the signature (witness) data is in a place that old nodes don’t see, we can bypass the one-megabyte block size limit without a hard fork. Old nodes will keep seeing a block with no more than one megabyte in it, but new nodes are aware of the witness data, which takes the total size well over one megabyte.
+Поскольку информация о подписях (свидетельство) находится в месте, которое старые узлы не видят, мы можем обойти ограничение размера блока в один мегабайт без хардфорка. Старые узлы будут продолжать видеть блок, содержащий не более одного мегабайта, но новые узлы знают о свидетельствах, общий размер которых значительно превышает один мегабайт.
 
-However the increase isn’t unlimited. SegWit nodes use a new way of calculating how data is counted, which gives a 75 percent discount to this segregated signature data. The percentage is somewhat arbitrary — enough to make SegWit transactions cheaper than their pre-SegWit counterparts, but not so much to incentivize abuse.
+Однако увеличение не безгранично. Узлы SegWit используют новый способ вычисления того, как рассчитывается цена транзакции, давая 75-процентную скидку на данные о подписях. Процент несколько произвольный — достаточный, чтобы сделать транзакции SegWit дешевле, чем их аналоги до SegWit, но не настолько, чтобы стимулировать злоупотребления.
 
-### Future SegWit Versions, e.g. Taproot
+### Будущие версии  SegWit, например, Taproot
 
-The topic of Taproot is covered in depth in chapter @sec:taproot_basics. But what’s important to know here is SegWit’s script versioning allows for easier upgrades to new transaction types, and the recent Taproot upgrade is the first example of this feature.
+Тема Taproot подробно рассматривается в главе @sec:taproot_basics. Но здесь нам важно знать, что управление версиями скриптов SegWit упрощает обновление до новых типов транзакций, и недавнее обновление Taproot - это первый пример использования такой возможности.
 
-The versioning works as follows, and is also touched on in chapter @sec:address, which covers addresses. The output of each transaction contains the amount and something called the `scriptPubKey`. The latter is a piece of Bitcoin script that constrains how to spend this coin, as we briefly mentioned in chapter @sec:address and will explain in more detail in chapter @sec:miniscript. With SegWit, the `scriptPubKey` always starts with a number, which is interpreted as the SegWit version. The rules for interpreting SegWit version 0 are set in stone, as are those for interpreting SegWit version 1, aka Taproot. But anything following a 2 or higher is up for grabs: Those rules may be written later.
+Управление версиями работает следующим образом (и также затрагивается в главе @sec:address, посвященной адресам). Вывод каждой транзакции содержит сумму и то, что называется `scriptPubKey`. Последний является частью биткоин-скрипта, который ограничивает, как тратить эту монету, о чем мы кратко упомянули в главе @sec:address и объясним более подробно в главе @sec:miniscript. В SegWit `scriptPubKey` всегда начинается с числа, которое интерпретируется как версия SegWit. Правила интерпретации SegWit версии 0 высечены в камне, как и правила интерпретации SegWit версии 1, также известной как Taproot. Но все, что следует за 2 или выше, открыто для захвата: эти правила могут быть написаны позже.
 
-Before a new soft fork activates, anything following an unknown version number is ignored, thus it’s anyone-can-spend. As we’ll explain in chapter @sec:taproot_activation one of the things that could go wrong with soft fork activation is that a majority of miners aren’t actually enforcing the new rules. But as long as most miners do enforce the new rules, they’ll ensure that these anyone-can-spend outputs, from the perspective of old nodes, won’t actually get spent.
+До активации нового софтфорка все, что следует за неизвестным номером версии, игнорируется, поэтому его может потратить кто угодно. Как мы объясним в главе @sec:taproot_activation, одна из вещей, которая может пойти не так при активации софт-форка, заключается в том, что большинство майнеров на самом деле не применяет новые правила. Но как только большинство майнеров начнет соблюдать новые правила, это будет гарантировать, что такие выходы, которые, с точки зрения старых узлов, может потратить каждый, на самом деле не будут потрачены.
 
-Miners that run updated node software consider blocks that spend these coins invalid. And as long as they’re in the majority, they’ll also create the longest chain. So now the new nodes are happy because all the new rules are being followed, and the old nodes are happy because no rules are being broken from their perspective and they just follow the longest chain. So the network stays in consensus.
+Майнеры, которые используют обновленное программное обеспечение узла, считают блоки, которые тратят эти монеты, недействительными. И пока они составляют большинство, они и создают самую длинную цепочку. Итак, теперь новые узлы счастливы, потому что все новые правила соблюдаются, а старые узлы счастливы, потому что с их точки зрения никакие правила не нарушаются, и они просто следуют самой длинной цепочке. Таким образом, сеть остается в консенсусе.
 
-### Hardware Wallets
+### Аппаратные кошельки
 
 In addition to all the aforementioned benefits — fixing malleability, increasing block size, versioning, etc. — SegWit introduces a commitment to the inputs, which primarily benefits hardware wallets.
 
-A hardware wallet is an external device that holds your private keys and can sign Bitcoin transactions. Because the device is purpose built and otherwise very simple, it’s less likely than your regular computer to have malware on it. It usually shows you a summary, based on its understanding of a transaction, and then asks you to approve the transaction before it actually signs.
+В дополнение ко всем вышеупомянутым преимуществам — исправление пластичности, увеличение размера блока, управление версиями и т. д. — SegWit внедряет фиксацию размера входов транзакции, что в первую очередь выгодно для аппаратных кошельков.
 
-Before signing a transaction, the device shows you the destination address and amount. That way you can verify that an attacker didn’t swap out the address for one they control.
+Аппаратный кошелек — это внешнее устройство, которое хранит ваши личные ключи и может подписывать биткоин-транзакции. Поскольку это специализированное устройство, которое в остальном очень простое, вероятность наличия вредоносных программ на нем меньше, чем на обычном компьютере. Обычно он показывает вам сводные данные, основанные на его понимании транзакции, а затем просит вас утвердить транзакцию, прежде чем она будет подписана.
 
-The device also checks that the input amounts add up to the output plus the fee. This protects you against a scenario where an attacker makes you pay an absurd amount of fees (perhaps colluding with a miner).
+Перед подписанием транзакции устройство показывает вам адрес назначения и сумму. Таким образом, вы можете убедиться, что злоумышленник не подменил адрес на тот, который он контролирует.
 
-However, transactions don’t actually specify their input amounts. The only way for the device to learn those is if you give it the input transactions. It can then inspect their output amounts. But having to send all the input transactions to the hardware wallet can be problematic, especially when they’re big, because these devices tend to be slow and have very limited memory resources.
+Устройство также проверяет, соответствует ли сумма входов сумме выходов плюс комиссия. Это защитит вас от сценария, когда злоумышленник заставит вас заплатить абсурдную сумму (возможно, в сговоре с майнером).
 
-To be clear, any wallet should perform these checks — not just hardware wallets. You always have inputs, which are coins you own. And then you have the outputs, which are coins you’re sending, including a change output to yourself usually. The difference between them is the fee the miner keeps, and the fee isn’t mentioned in the transaction, so the wallet calculates it for you.
+Однако в транзакциях фактически не указываются суммы входов. Единственный способ, каким устройство могло бы их выяснить — передать ему входные транзакции. Затем кошелек сможет проверить соответствующие выходные суммы. Но необходимость отправлять все входные транзакции в аппаратный кошелек может быть проблематичной, особенно когда они большие, потому что эти устройства, как правило, медленные и имеют очень ограниченные ресурсы памяти.
 
-This works for a regular wallet, because it knows how much all of the inputs are worth. But a hardware wallet is disconnected from the internet, so it doesn’t necessarily know how much all the inputs are worth. Without that information, it can’t be sure how much money it’s about to send.
+Для ясности уточним, что такие проверки должен выполнять любой кошелек, а не только аппаратные кошельки. У вас всегда есть входы, где находятся монеты в вашем владении. Также у вас есть выходы, где представлены монеты, которые вы отправляете, в том числе обычно вывод сдачи самому себе. Разница между суммой входов и выходов - это комиссия, которую удерживает майнер, сама она не упоминается в транзакции, поэтому кошелек рассчитывает ее за вас.
 
-Therefore, a hardware wallet has the risk that it’s sending 10 million coins as a fee without realizing it. And if somebody colludes with the miner or just wants to take your coins hostage in some weird way, that’s not good. So what SegWit does is it commits to those inputs.^[Unfortunately, the approach used by SegWit still left some potential attacks open, but these have been addressed by Taproot.]
+Это работает для обычного кошелька, потому что он знает, сколько монет на каждом входе. Но аппаратный кошелек отключен от Интернета, поэтому он не обязательно знает, сколько лежит на каком входе. Без этой информации он не может быть уверен, сколько денег он готов отправить.
 
-What SegWit adds to this is that, before creating a signature, the output amount is added to the data that’s signed. The device now receives these amounts, along with the transaction it needs to sign. It uses that to inform the user and to create the signature. If your computer lied to the device about the amount, then the resulting signature is invalid. So the device no longer needs to look at the actual previous transaction.
+Следовательно, аппаратный кошелек рискует отправить 10 миллионов монет в качестве комиссии, не осознавая этого. И если кто-то вступает в сговор с майнером или просто хочет каким-то странным образом захватить ваши монеты в заложники, это нехорошо. Собственно, SegWit именно это и делает - фиксирует суммы на входах транзакции. ^ [К сожалению, подход, используемый SegWit, по-прежнему оставляет открытыми некоторые потенциальные атаки, но Taproot устранил и их.]
 
-Note that nothing is stopping your computer from crafting a fake transaction with fake inputs and any output amount it wants — the hardware wallet will happily sign it. But when your computer then broadcasts it to the network to get it included in the blockchain, it’s just not going to be valid. So it’s pointless for an attacker to try this.
+SegWit добавил к имеющемуся механизму записи транзакции то, что перед созданием подписи выходная сумма добавляется к подписанным данным. Теперь устройство получает эти суммы вместе с транзакцией, которую необходимо подписать. Оно использует эти данные для информирования пользователя и создания подписи. Если ваш компьютер солгал устройству о сумме, то полученная подпись оказывается недействительной. Таким образом, устройству больше не нужно смотреть на транзакции, предшествующие подписываемым.
 
-### Recap
+Обратите внимание, что ничто не мешает вашему компьютеру создать поддельную транзакцию с поддельными входами и любой суммой вывода, которую он хочет — аппаратный кошелек с радостью подпишет ее. Но когда ваш компьютер затем транслирует ее в сеть, чтобы включить в блокчейн, она просто будет невалидной. Так что злоумышленнику бессмысленно пытаться это сделать.
 
-The main benefit of SegWit is that it fixes malleability, which enables things like the Lightning network, resulting in a pretty big increase in potential transaction throughput.
+### Резюме
 
-The second benefit is an increase in block size, even though this is dwarfed by the capacity increase Lightning could achieve. The third is versioning, which makes it easier to deploy future upgrades. And the fourth is improved hardware wallet support.
+Основное преимущество SegWit заключается в том, что он устраняет пластичность, это позволяет использовать такие вещи, как сеть Lightning, что приводит к довольно большому увеличению потенциальной пропускной способности транзакций.
 
-### Block Size War
+Вторым преимуществом является увеличение размера блока, хотя это ничтожно мало по сравнению с увеличением пропускной способности, которого может достичь Lightning. Третье — управление версиями, которое упрощает развертывание будущих обновлений. И четвертое — улучшенная поддержка аппаратных кошельков.
 
-If the above sounds great and uncontroversial, it’s because, in my opinion, it is. There was, however, a lot of drama in the years surrounding this soft fork. One account of this is provided in Jonathan Bier’s _The Blocksize War: The battle over who controls Bitcoin’s protocol rules_.^[<https://www.amazon.com/Blocksize-War-controls-Bitcoins-protocol/dp/B08YQMC2WM>]
+### Война за размер блока
+
+Если вышеизложенное звучит великолепно и бесспорно, то это потому, что, на мой взгляд, так оно и есть. Однако в годы, когда готовился этот софтфорк, вокруг него разворачивалась целая драма. Хороший рассказ об этом можно прочитать в книге Джонатана Бира _«Война за размер блока: битва за то, кто контролирует правила протокола Биткоина»_.
+
