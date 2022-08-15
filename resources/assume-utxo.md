@@ -3,9 +3,11 @@
 
 \EpisodeQR{14}
 
-One of the biggest bottlenecks — if not the biggest one — for scaling Bitcoin is initial block download. This is the time it takes for a Bitcoin node to synchronize with the Bitcoin network, as it needs to process all historic transactions and blocks to construct the latest unspent transaction output (UTXO) set, i.e. the current state of Bitcoin ownership.
+Одно из наиболее узких мест — если не самое узкое — при масштабирования Биткоина — начальная загрузка блокчейна. Это время, которое требуется биткоин-узлу для синхронизации с сетью Биткоина, поскольку ему необходимо обработать все исторические транзакции и блоки, чтобы создать набор последних неизрасходованных выходных данных транзакций (UTXO), то есть текущее состояние владения биткоинами.
 
 This chapter will cover some of the ways sync time has been sped up over time. It was first improved through Headers First synchronization, which ensures that new Bitcoin nodes don’t waste time validating (potentially) weaker blockchains. One of several recent improvements to synchronizing time is called Assume Valid, a default shortcut that lets nodes skip signature verification of older transactions, instead trusting that the Bitcoin Core development process — in combination with the resource-expensive nature of mining — offers a reliable version of transaction history.
+
+В этой главе будут рассмотрены некоторые способы ускорения синхронизации с течением времени. Сначала он был улучшен за счет синхронизации Headers First, которая гарантирует, что новые узлы Биткойн не будут тратить время на проверку (потенциально) более слабых блокчейнов. Одно из нескольких недавних улучшений синхронизации времени называется «Предположим, валидно» — ярлык по умолчанию, который позволяет узлам пропускать проверку подписи старых транзакций, вместо этого полагаясь на то, что процесс разработки Bitcoin Core — в сочетании с ресурсоемким характером майнинга — предлагает надежную версию. истории транзакций.
 
 It’ll also discuss how the security assumptions underpinning Assume Valid could be extended to allow for a potential future upgrade, AssumeUTXO, to offer new Bitcoin Core users a speedy solution to get up to speed with the Bitcoin network by syncing the most recent blocks first and checking historical blocks in the background later.
 
