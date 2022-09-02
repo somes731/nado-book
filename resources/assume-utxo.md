@@ -89,22 +89,22 @@ Assume Valid присутствует в Bitcoin Core с версии 0.14 (2017
 
 Начнем со второго вопроса — проверки лимита в 21 миллион — ответ _нет_. Вы можете рассчитать общее количество биткоинов, существующих прямо сейчас, сложив все значения в наборе UTXO. И тогда вы можете посмотреть исходник, чтобы понять, сколько монет может быть создано в будущем. Для этого не нужно видеть прошлые блоки.
 
-Однако, чтобы знать, примут ли другие монеты, которые вы получили, вам нужно знать, что человек, который отправил вам монеты, не создал их из воздуха и не украл. Это восходит к вопросу о том, сможет ли злонамеренный разработчик избежать наказания за это. Давайте посмотрим, как это можно сравнить с манипулированием Assume Valid.
+Однако, чтобы знать, примут ли другие монеты, которые вы получили, вам нужно знать, что человек, который отправил вам монеты, не создал их из воздуха и не украл. Это отсылает нас к вопросу о том, сможет ли злонамеренный разработчик избежать наказания за это. Давайте посмотрим, как это можно сравнить с манипулированием Assume Valid.
 
-Let’s say developers create some coins out of thin air and add them to the UXO set, or that they reassign existing coins to themselves. Anyone verifying the snapshot would find out, so again, code transparency mitigates some of this.
+Допустим, разработчики создают какие-то монеты из воздуха и добавляют их в набор UXO, или переназначают существующие монеты себе. Любой, кто проверит снимок, узнает об этом, так что опять же, прозрачность кода частично смягчает проблему.
 
-But where, in the Assume Valid example above, the developers would have to create an invalid block right away, before making a new software release, that’s not necessary here. The new or stolen coins would exist in your UTXO set without ever having been in a block. So miners and existing node operators won’t initially detect this, because there’s no invalid block floating around.
+Но там, где в приведенном выше примере с Assume Valid разработчикам пришлось бы сразу создавать недопустимый блок, прежде чем делать новый релиз ПО, здесь это не обязательно. Новые или украденные монеты будут существовать в вашем наборе UTXO, даже не будучи в блоке. Таким образом, майнеры и существующие операторы узлов изначально не обнаружат нестыковку, потому что вокруг не будет недопустимых блоков.
 
-But there’s a catch: When you, as the new user, receive a coin that was created out of nowhere, it never gets confirmed in a block. The new transaction won’t be mined, because miners have the correct UTXO set and recognize the transaction as invalid.
+Но есть одна загвоздка: когда вы, как новый пользователь, получаете монету, созданную из ниоткуда, она никогда не подтверждается в блоке. Новая транзакция не будет добавлена ни в один блок, потому что майнеры имеют правильный набор UTXO и сочтут транзакцию недействительной.
 
-What if miners are in on it? Then the transaction would confirm and you’d have been fooled. However, every other node would reject the new block, and the attack would now be visible to everyone involved.
+Но что, если майнеры вовлечены в заговор? Тогда транзакция подтвердится, и вас обманут. Однако все прочие узлы отклонят новый блок, и теперь атака будет видна всем заинтересованным лицам.
 
-Developers could be very patient though. Instead of immediately trying to spend the from-thin-air coins, they could wait many years. Perhaps by that time, many miners will have reinstalled their node, along with the manipulated snapshot, and synced it. Perhaps many exchanges did so as well. And many regular users. So when they finally spend the from-thin-air coins, perhaps the block is only considered invalid by a small group of old school hardcore bitcoiners.
+Хотя разработчики могут быть очень терпеливы. Вместо того, чтобы сразу пытаться потратить монеты из воздуха, они могли бы подождать много лет. Возможно, к тому времени многие майнеры переустановят свои узлы, получив измененный снимок, и синхронизируют их. Возможно, многие биржи поступят так же. И много постоянных пользователей. Поэтому, когда разработчики, наконец, тратят монеты из воздуха, возможно, блок считается недействительным только небольшой группой хардкорных биткойнеров старой школы.
 
-So as before, this attack requires much of the world to conspire against you, but as far as global conspiracies go, it may be ever so slightly less difficult to get away with.
+Так что, как и прежде, эта атака требует, чтобы большая часть мира вступила в заговор против вас, но что касается глобальных заговоров, для них существуют и менее заковыристые пути.
 
-One way to mitigate this attack is for every block to include a hash of the current UTXO snapshot. This would be a soft fork (see chapter @sec:taproot_activation). That way, every node verifies the snapshot, and it wouldn’t have to be included in the software.
+Один из способов предотвратить эту атаку — включить в каждый блок хэш текущего моментального снимка UTXO. Это будет софтфорк (см. главу @sec:taproot_activation). Таким образом, каждый узел будет проверять снимок, и его не нужно будет включать в программное обеспечение узла.
 
-However, as things stand today, producing such a hash would increase the verification time for a block from a few seconds to more than a minute. So a different type of hash has been proposed.^[MuHash: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014337.html>]
+Однако, с учетом текущего положения дел, создание такого хэша увеличило бы время проверки блока с нескольких секунд до более чем минуты. Поэтому был предложен другой тип хэша.^[MuHash: <https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2017-May/014337.html>]
 
-There will probably be a lot more discussion before such a soft fork is even proposed. At the time of writing, AssumeUTXO is still being developed. Nodes can already produce snapshots of their UTXO set, but the code to actually load and use a snapshot is still undergoing review.^[<https://github.com/bitcoin/bitcoin/pull/15606>]
+Вероятно, случится еще много обсуждений, прежде чем будет подобный софт-форк. На момент написания статьи AssumeUTXO все еще находился в разработке. Узлы уже могут создавать снимки своего набора UTXO, но код для загрузки и применения снимка все еще находится на рассмотрении.^[<https://github.com/bitcoin/bitcoin/pull/15606>]
