@@ -1,13 +1,13 @@
-# Attacking Bitcoin
+# Атаки на Биткоин
 
-## Overview {.unlisted .unnumbered}
+## Введение {.unlisted .unnumbered}
 
-An important design philosophy of Bitcoin — and safety engineering in general — is to be honest about the ways in which it’s potentially vulnerable. The following chapters should cause the reader to be paralyzed with fear — or at least slightly worried.
+Важная часть философии проектирования Биткоина — и техники безопасности в целом — заключается в том, чтобы быть честным в отношении того, в чем он потенциально уязвим. Следующие главы должны заставить читателя впасть в ступор от страха или хотя бы слегка встревожиться.
 
-Several of the potential attacks described have never even happened in practice. Nonetheless, we want to prevent them, and this effort has led to several cool innovations.
+Некоторые из описанных потенциальных атак никогда не происходили на практике. Тем не менее, мы хотим предотвратить их, и эти усилия уже привели к нескольким интересным нововведениям.
 
-The first attack that comes to mind is probably the infamous 51 percent attack, but it’s extremely expensive to execute and highly visible.^[Here are some charts that illustrate the difficulty of this attack: <https://bitcoin.sipa.be> The supply chain problems caused by chip shortages in 2020-2022 illustrate that even a well-resourced government can’t easily get its hands on enough chips to attack the network.] This concern tends to be followed by worries about “quantum,” which we addressed at the end of chapter @sec:address.
+Первая атака, которая приходит на ум — это, вероятно, печально известная атака 51%, но она чрезвычайно дорога в исполнении и хорошо заметна. ^ [Вот несколько диаграмм, иллюстрирующих сложность этой атаки: <https://bitcoin.sipa.be> Проблемы с цепочками поставок, вызванные нехваткой чипов в 2020-2022 гг., показывают, что даже хорошо обеспеченное ресурсами правительство не может легко получить в свои руки достаточное количество чипов для атаки на сеть.] За этим беспокойством обычно следуют опасения по поводу «квантовых компьютеров», о котором мы говорим в конце главы @sec:address.
 
-But the lesser-known eclipse attack is a much more pressing concern. Thwarting an attack like this is a cat-and-mouse game that we explore in chapters @sec:eclipse and @sec:fake_nodes.
+Но менее известная атака затмения вызывает гораздо более серьезную озабоченность. Предотвращение такой атаки — это игра в кошки-мышки, которую мы рассмотрим в главах @sec:eclipse и @sec:fake_nodes.
 
-Another thing to worry about as a user is that the software you download doesn’t outright steal your coins, and we’ll go down that rabbit hole in chapter @sec:guix.
+Еще одна вещь, о которой следует беспокоиться как пользователю, заключается в том, чтобы загружаемое вами программное обеспечение не крало ваши монеты напрямую, и мы спустимся в эту кроличью нору в главе @sec:guix.
