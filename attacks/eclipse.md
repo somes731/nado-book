@@ -1,15 +1,17 @@
 \newpage
-## Eclipse Attacks {#sec:eclipse}
+## Атаки затмения {#sec:eclipse}
 
 \EpisodeQR{17}
 
-An eclipse attack is a type of attack that isolates a Bitcoin node by occupying all of its connection slots to block the node from receiving any transactions and blocks, other than those sent to it by the attacker. This prevents the node from seeing what’s going on in the Bitcoin network, and it potentially even tricks the node into accepting an alternative branch of the Bitcoin blockchain. Although nodes will never accept an invalid transaction or block, an eclipse attack can still cause harm, as we’ll see.
+Атака затмения — это тип атаки, которая изолирует биткоин-узел, занимая все его слоты подключения, чтобы заблокировать узел от получения каких-либо транзакций и блоков, кроме тех, которые были отправлены ему злоумышленником. Это не позволяет узлу видеть, что происходит в сети Биткоина, и потенциально даже может обманом заставить узел принять альтернативную ветвь блокчейна Биткоина. Хотя узлы никогда не примут недействительную транзакцию или блок, атака затмения все же может, как мы увидим, причинить вред.
 
-This chapter discusses how this type of attack could be used to dupe users and miners. It also talks about solutions to counter this type of attack, some of which were outlined in the 2015 paper “Eclipse Attacks on Bitcoin’s Peer-to-Peer Network,” which was written by Ethan Heilman, Alison Kendler, Aviv Zohar, and Sharon Goldberg from Boston University and Hebrew University/MSR Israel.^[<https://cs-people.bu.edu/heilman/eclipse/>] Many of the solutions proposed by this paper have gradually been implemented in Bitcoin Core software in the past few years. This chapter also discusses some solutions that weren’t in the paper.
+В этой главе обсуждается, как такой тип атаки можно использовать для обмана пользователей и майнеров. В ней также рассказывается о решениях для противодействия такому типу атак, некоторые из которых были опиисаны в статье 2015 года «Атаки затмения на одноранговую сеть Биткоина», написанной Итаном Хейлманом, Элисон Кендлер, Авивом Зохаром и Шэрон Голдберг из Бостонского университета и Еврейского университета/MSR Israel.^[<https://cs-people.bu.edu/heilman/eclipse/>] Многие из решений, предложенных в этой статье, постепенно внедрялись в программное обеспечение Bitcoin Core в течение нескольких последних лет. В этой главе также обсуждаются некоторые решения, которых не было в статье.
 
-### Why an Eclipse Attack Hurts
+### Почему атаки затмения болезненны
 
 Under normal circumstances, your node connects to the outside world via up to eight so-called “outbound peers.” The outside world can also connect to you, and for that, your node allows a maximum of 117 inbound peers. In the case of an eclipse attack, your node only sees and connects to your attacker. So you might think you’re talking to the whole world, but you’re actually only talking to one person. In other words, that person is eclipsing your view of the world.
+
+При нормальных обстоятельствах ваш узел подключается к внешнему миру через так называемые «экпортные узлы» числом до восьми. Внешний мир также может подключиться к вам, и для этого ваш узел допускает максимум 117 входящих пиров. В случае атаки eclipse ваш узел видит и подключается только к вашему злоумышленнику. Таким образом, вы можете думать, что разговариваете со всем миром, но на самом деле вы разговариваете только с одним человеком. Другими словами, этот человек затмевает ваш взгляд на мир.
 
 The reason you connect to all these nodes is because you want to ask them for new transactions and blocks. Data flows in both directions, no matter if the peer is inbound or outbound. Your peers may spontaneously send you blocks and transactions, and your node will in turn forward them to others. As long as you’re connected to at least one honest peer, you won’t miss out on the latest blocks and transactions.
 
