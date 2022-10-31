@@ -67,27 +67,27 @@
 
 Наконец, в рамках того же предложения по редакции кода узлы также начали запоминать, к каким узлам они ранее подключались. Всякий раз, когда им нужно было новое соединение, они бросали монету и либо подключались к одному из них, либо выбирали новое из одного из 256 сегментов.
 
-### The Botnet
+### Ботнет
 
-You might think this would do the trick, but here’s where the paper comes into play. The authors ran a simulation to see how difficult it was to actually overflow all these buckets, and it found that, within a matter of days, it can be successful.
+Можно было бы предположить, что такая защита сработает, но такие предположения надо проверять. Авторы провели симуляцию, чтобы увидеть, насколько сложно на самом деле переполнить все сегменты, и обнаружили, что в течение нескольких дней атака вполне может увенчаться успехом.
 
-How did they do this? By using a botnet^[<https://en.wikipedia.org/wiki/Botnet>] — not a real one of course, as that would probably be unethical for university researchers, not to mention potentially illegal. But they simulated one. A botnet is a group of random computers in the world that have been hacked and can be remote controlled. Because they’re not all in the same data center as our example above, their IP addresses have many different starting digits, so they end up in different buckets.
+Как они это сделали? С помощью ботнета^[<https://en.wikipedia.org/wiki/Botnet>] — не настоящего, конечно, так как это, вероятно, было бы неэтично для университетских исследователей, и к тому же потенциально незаконно. Но они имитировали его работу. Ботнет — это группа случайных компьютеров по всему миру, которые были взломаны и могут управляться удаленно. Поскольку они не все находятся в одном центре обработки данных, как в нашем примере выше, их IP-адреса имеют много разных начальных цифр, поэтому они попадают в разные сегменты.
 
-The paper estimated that a botnet with less than 5,000 computers can successfully pull off an eclipse attack. That might sound like a big botnet, but you can rent that from various nefarious “companies” for less than $100.^[Business Model of a Botnet: <https://arxiv.org/pdf/1804.10848.pdf>]
+В документе подсчитано, что ботнет с менее чем 5000 компьютеров может успешно осуществить атаку затмения. Вам может показаться, что это большой ботнет, но вы можете арендовать его у различных гнусных «компаний» менее чем за 100 долларов. ^ [Бизнес-модель ботнета: <https://arxiv.org/pdf/1804.10848.pdf>]
 
-In addition to attacking your node from many different directions, thereby defeating the bucket system, the hypothetical attacker in the paper also exploited other weaknesses.
+Помимо атаки на ваш узел с разных направлений, что привело к победе над системой сегментов, гипотетический злоумышленник в статье также использовал другие слабые места.
 
-First, they would flood your node with IP addresses that are known to be fake. This would flush all buckets with fake nodes. Remember that when your node needs a new peer, it’ll toss a coin to either connect to familiar node or try a new one. Well, there wouldn’t be any new ones to try.^[We’ll revisit the problem of fake nodes in chapter @sec:fake_nodes.]
+Во-первых, он наводнил ваш узел заведомо поддельными IP-адресами. Это привело к очистке всех сегментов с поддельными узлами. Помните, что когда вашему узлу понадобится новый пир, он подбросит монету, чтобы либо подключиться к знакомому узлу, либо попробовать новый. Но никаких новых узлов, которые можно было бы попробовать, у него не оказалось. ^ [Мы вернемся к проблеме поддельных узлов в главе @sec:fake_nodes.]
 
-For the other side of the coin flip — connecting to a familiar node — the attackers exploited another weakness. It turns out your node considers any node it ever connected to “familiar.” That includes botnet nodes that connected _to_ it, even if only briefly.^[Fixed in 2016: <https://github.com/bitcoin/bitcoin/pull/8594>] There’s a separate 64-bucket system for these familiar nodes, and over time, they get filled up by botnet IPs.
+При выборе альтернативы — подключения к знакомому узлу — атакующий использовал еще одну слабость. Оказывается, ваш узел считает любой узел, к которому он когда-либо подключался, «знакомым». Это относится и к узлам ботнета, которые _сами соединялись с ним_, пусть и ненадолго.^[Исправлено в 2016 году: <https://github.com/bitcoin/bitcoin/pull/8594>] Для этих знакомых узлов существует отдельная система из 64 сегментов, и со временем все они заполняются IP-адресами ботнета.
 
-### Don’t Crash
+### Не вызывайте сбоев
 
-At this point, your node still has long-lived connections to the real world from before the attack began, so the attacker still needs to get rid of those. The trick is to either wait for your node to restart, or to try and crash it.
+На данный момент у вашего узла все еще есть долговременные соединения с реальным миром, существовавшие до начала атаки, поэтому злоумышленнику все еще нужно избавиться от них. Хитрость заключается в том, чтобы либо дождаться перезапуска вашего узла, либо добиться его сбоя.
 
-Whenever your node restarts,^[Nodes that run on a server are typically automatically restarted after a crash or system reboot, using something like systemd: <https://en.wikipedia.org/wiki/Systemd>] it starts out with zero connections. Firstly, this creates an opportunity to very quickly fill up all 117 inbound slots. And secondly, it’s going to look at that file of peers it knows, and it’s going to try and connect to them. If an attacker succeeded at dominating these buckets, your node is exclusively going to connect to attacker IP addresses. That’s all that’s needed for the eclipse attack to be in play.
+Всякий раз, когда ваш узел перезагружается, ^ [Узлы, которые работают на сервере, обычно автоматически перезапускаются после сбоя или перезагрузки системы, используя что-то вроде systemd: <https://en.wikipedia.org/wiki/Systemd>] он стартует с нулевого количества подключений. Во-первых, это дает возможность очень быстро заполнить все 117 входящих слотов. И, во-вторых, он просматривает файл с известными ему пирами и пытается подключиться к ним. Если атакующему удастся доминировать во всех сегментах, ваш узел будет подключаться исключительно к IP-адресам атакующего. Это все, что нужно для запуска атаки затмения.
 
-So although crashing a Bitcoin node isn’t a very useful attack on its own, it can help when performing an eclipse attack. This is one reason why it’s important for developers to ensure they don’t write code that can make a node crash.
+Таким образом, хотя вызов сбоя биткоин-узла сам по себе не очень полезен в качестве атаки, он может помочь при выполнении атаки затмения. Это одна из причин, по которой разработчикам важно убедиться, что они не пишут код, который может привести к сбою узла.
 
 ### How to Solve It
 
