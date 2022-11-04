@@ -114,26 +114,28 @@ Why two? It’s not a good idea to always try to reconnect to the same nodes aga
 
 Erlay (см. приложение @sec:more_eps) — это предложение по уменьшению ширины канала, необходимой для синхронизации мемпула. Это снижает стоимость (ширины канала) _за соединение_. Более низкая стоимость соединения позволяет узлам иметь больше соединений. Наличие большего количества соединений усложняет любую схему атаки eclipse.
 
-Еще один способ иметь больше подключений без чрезмерного увеличения ширины канала — ограничить некоторые подключения только блоками и не синхронизировать мемпул с такими пирами. Это было реализовано в 2019 году. ^[<https://github.com/bitcoin/bitcoin/pull/15759>]
+Еще один способ иметь больше подключений без чрезмерного увеличения ширины канала — ограничить некоторые подключения только блоками и не синхронизировать с такими пирами мемпул. Это было реализовано в 2019 году. ^[<https://github.com/bitcoin/bitcoin/pull/15759>]
 
-Finally, there’s the Blockstream Satellite,^[<https://blockstream.com/satellite/>] or any other satellite or even radio broadcast.^[<https://www.wired.com/story/cypherpunks-bitcoin-ham-radio/>] These allow anyone in the world to receive the latest blocks. This is mainly useful for people with very low bandwidth internet connections in remote areas. But it can also offer protection against an eclipse attack. This is because when your node receives the satellite signal, even if all inbound and outbound connections are taken over by an attacker, you’ll still learn about new blocks.
+Наконец, есть спутники Blockstream ^[<https://blockstream.com/satellite/>] или любые другие, или даже радиовещание.^[<https://www.wired.com/story/cypherpunks-bitcoin-ham-radio/>] Они позволяют любому человеку в мире получать последние блоки. Это в основном полезно для людей в отдаленных районах с очень низкой пропускной способностью интернет-соединения. Но эти способы также могут обеспечить защиту и от атаки затмения. Это связано с тем, что пока ваш узел получает спутниковый сигнал, даже если все входящие и исходящие соединения перехвачены атакующим, вы все равно узнаете о новых блоках.
 
-Note, however, that you shouldn’t blindly trust the satellite either, for _it_ might try to eclipse you. But remember that you only need a single honest peer, and you achieve this by having as diverse a set of connections as possible.
+Обратите внимание, однако, что вы не должны слепо доверять и спутнику, ведь он точно так же может попытаться затмить вас. Но помните, что вам нужен только один честный пир, и вы достигаете этого, имея как можно более разнообразный набор соединений.
 
-The Bitcoin Core development wiki also contains an overview of eclipse attacks and various counter measures.^[<https://github.com/bitcoin-core/bitcoin-devwiki/wiki/Addrman-and-eclipse-attacks>]
+Вики по разработке Bitcoin Core также содержит обзор атак затмения и различных мер противодействия им.^[<https://github.com/bitcoin-core/bitcoin-devwiki/wiki/Addrman-and-eclipse-attacks>]
 
-### Erebus Attack
+### Атака Эребуса
 
 \EpisodeQR{18}
 
-If you want to learn more about eclipse attacks, you might be interested in the Erebus attack^[<https://erebus-attack.comp.nus.edu.sg>]: an eclipse attack where an attacker essentially spoofs an entire part of the internet.
+Если вы хотите узнать больше об атаках затмения, вас может заинтересовать атака Эребуса^[<https://erebus-attack.comp.nus.edu.sg>]: атака затмения, при которой злоумышленник фактически подделывает целую область интернета.
 
-How this works is the internet is made up of Autonomous Systems (AS), which are basically clusters of IP addresses owned by the same entity, like an ISP.^[<https://www.cloudflare.com/learning/network-layer/what-is-an-autonomous-system/>]
+Как это работает. Интернет состоит из автономных систем (АС), которые в основном представляют собой кластеры IP-адресов, принадлежащих одному и тому же субъекту, например интернет-провайдеру. ^[<https://www.cloudflare.com/learning/network-layer/what-is-an-autonomous-system/>]
 
-As it turns out, however, some Autonomous Systems can effectively act as bottlenecks when trying to reach other Autonomous Systems. This allows an attacker controlling such a bottleneck to launch a successful eclipse attack — even against nodes that connect with multiple Autonomous Systems.
+Однако оказывается, что некоторые автономные системы могут выступать в качестве узких мест при попытке связаться с другими автономными системами. Это позволяет злоумышленнику, контролирующему такое узкое место, запустить успешную атаку затмения — даже против узлов, которые подключаются к нескольким автономным системам.
 
 As explained above, Bitcoin Core nodes already counter eclipse attacks by ensuring they’re connected to a variety of IP addresses, based on the first two digits of the IP address. This can be further improved by separating buckets by Autonomous Systems instead.
 
-But this doesn’t thwart the Erebus attack. For that, recent versions of Bitcoin Core include an optional feature — ASMAP.^[<https://blog.bitmex.com/call-to-action-testing-and-improving-asmap/>]
+Как объяснялось выше, узлы Bitcoin Core уже противостоят атакам затмения, гарантируя, что они подключены к различным IP-адресам на основе первых двух цифр IP-адреса. Можно еще улучшить эту защиту, если делить подключения на сегменты согласно их принадлежности к разным автономным системам.
 
-The episode explains how mapping the internet has allowed Bitcoin Core contributors to create a tool which ensures that Bitcoin nodes not only connect to various Autonomous Systems, but also that they avoid being trapped behind said bottlenecks.
+Но это не мешает атаке Эребуса. На такой случай последние версии Bitcoin Core включают дополнительную функцию — ASMAP (карту автономных систем).^[<https://blog.bitmex.com/call-to-action-testing-and-improving-asmap/>]
+
+В этом документе объясняется, как картографирование Интернета позволило участникам Bitcoin Core создать инструмент, который гарантирует, что узлы Биткоина не только подключаются к различным автономным системам, но и избегают попадания в ловушку из-за указанных узких мест.
