@@ -1,28 +1,28 @@
 \newpage
-## Fake Nodes {#sec:fake_nodes}
+## Фейковые узлы {#sec:fake_nodes}
 
 \EpisodeQR{49}
 
-This chapter talks about an attack that took place in the summer of 2021. It discusses what happened, speculates why it may have happened, and shares the fix that will prevent it from happening again.
+В этой главе рассказывается об атаке, имевшей место летом 2021 года. В ней обсуждается, что произошло, выдвигаются предположения, почему это могло произойти, и рассказывается об исправлении, которое предотвратит повторение этой атаки.
 
 <!-- Blank line to move the next section header below the QR code -->
 \
 
-### Random Connections
+### Случайные подключения
 
-In mid 2021, people who run nodes started noticing that random people were connecting to them.^[To read the thread where people mention noticing this attack, see <https://bitcointalk.org/index.php?topic=5348856.0>] This, on its own, is perfectly normal. As we explained in chapter @sec:dns, it’s part of how nodes bootstrap to the network. They randomly connect to nodes and ask for addresses of more nodes to connect to. They also announce their own IP, which gets gossiped around, so soon enough, the node will receive inbound connections.
+В середине 2021 года владельцы узлов начали замечать, что к ним подключаются случайные люди. ^[Для прочтения ветки, в которой упоминается об этой атаке, см. <https://bitcointalk.org/index.php?topic=5348856.0>] Это само по себе совершенно нормально. Как мы объясняли в главе @sec:dns, это часть механизма первоначальной загрузки узлов в сеть. Новык узлы случайным образом подключаются к существующим узлам и запрашивают адреса других узлов для подключения еще и к ним. Они также объявляют свой собственный IP-адрес, о котором начинают ходить сплетни, поэтому достаточно скоро узел будет получать входящие соединения.
 
-However, what was unusual in this instance was these random people would connect to them and then send 500 messages,^[<https://developer.bitcoin.org/reference/p2p_networking.html#addr>] and each of those 500 messages would contain 10 IP addresses that were supposed to represent other nodes in the network. After that, they’d just disconnect. It certainly didn’t seem dangerous, but it wasn’t the usual behavior.
+Однако в данном случае было необычно то, что эти случайные люди подключались к ним, а затем отправляли 500 сообщений, ^[<https://developer.bitcoin.org/reference/p2p_networking.html#addr>] и каждое из этих 500 сообщений содержало 10 IP-адресов, которые должны были представлять другие узлы в сети. После этого они просто отключались. Это, конечно, не казалось опасным, но это было не обычным поведением.
 
-Although the messages were perfectly valid, their contents was nonsense, because the IP addresses these nodes sent were just randomly generated numbers. You could tell this if you mapped them out; the pattern would match that of randomly generated numbers. Another way you could tell is because the list would contain IP addresses that simply can’t exist for various reasons, e.g. because they’re reserved for private networks such as 192.168.0.1.
+Хотя сообщения были абсолютно достоверными, их содержание было бессмысленным, потому что IP-адреса, отправляемые этими узлами, были просто случайно сгенерированными числами. Вы могли бы понять это, если бы нанесли их на карту; шаблон распределения будет соответствовать шаблону случайно сгенерированных чисел. Другой способ, которым вы могли бы это установить, состоит в том, что список содержал IP-адреса, которые просто не могут существовать по разным причинам, например. потому что они зарезервированы для частных сетей, таких как 192.168.0.1.
 
-The problem with these randomly generated IP addresses is that, if you’re flooded with them, they make it almost impossible to connect to a real node. There are less than a hundred thousand nodes out there that your node can connect to, yet there are four billion IPv4 addresses. The purpose of the address gossip protocol is exactly to prevent this random guessing. But this attack wasn’t big enough to flood individual nodes.
+Проблема с этими случайно сгенерированными IP-адресами заключается в том, что, если вы перегружены ими, практически невозможно подключиться к реальному узлу. Существует менее ста тысяч узлов, к которым может подключиться ваш узел, но существует четыре миллиарда адресов IPv4. Цель протокола сплетен об адресах как раз и состоит в том, чтобы предотвратить подобное случайное угадывание. Но силы этой атаки было недостаточно, чтобы привести к сбоям отдельных узлов.
 
-As people looked into this more, they discovered it was happening on a fairly large scale, classifying it as an attack. In reality, this kind of attack isn’t a big problem for an individual node, especially if it already has lots of IP addresses from honest nodes. It might connect to a few nodes that don’t exist, but it’s mostly a waste of time and resources, since it’s connecting to and storing IP addresses that aren’t real Bitcoin node IP addresses. So on the individual level, it’s like a kid throwing a little pebble at you.
+По мере изучали этого явления было обнаружено, что это происходит в довольно больших масштабах, и такое поведение классифицировали как атаку. На самом деле такая атака не представляет большой проблемы для отдельного узла, особенно если у него уже есть много IP-адресов от честных нод. Он может подключаться к нескольким несуществующим узлам, но в основном это пустая трата времени и ресурсов, поскольку он подключается и сохраняет IP-адреса, которые не являются реальными IP-адресами биткоин-узлов. Так что на индивидуальном уровне это похоже по эффекту на то, как ребенок бросает в вас маленький камешек.
 
-Furthermore, we know it wasn’t a big deal just from the fact that hardly anyone even noticed what was happening. But it does deserve investigation.
+Кроме того, мы знаем, что все это не имело большого значения, просто потому что почти никто даже не заметил происходящего. Но все же явление заслуживает расследования.
 
-### Why Would Someone Attack?
+### Почему кто-то атакует?
 
 A couple weeks after this attack, Matthias Grundmann and Max Baumstark wrote a paper^[<https://arxiv.org/abs/2108.00815>] describing the attack and speculating about the reasoning behind it.
 
