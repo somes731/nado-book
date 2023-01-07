@@ -1,4 +1,4 @@
 \newpage
-## Why Open Source Matters — Guix {short="Guix" link="sec:guix"}
+## Почему Open Source это важно — Guix {short="Guix" link="sec:guix"}
 
 \EpisodeQR{21}
