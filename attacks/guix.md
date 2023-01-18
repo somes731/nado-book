@@ -1,10 +1,10 @@
 В этой главе обсуждается программное обеспечение с открытым исходным кодом в контексте того, почему важно, чтобы программное обеспечение Биткоина имело открытый исходный код. Но также здесь раскрывается причина, по которой даже ПО с открытым исходным кодом не обязательно решает все проблемы доверия, связанные с софтом.
 
-In theory, the fact that most Bitcoin nodes, wallets, and applications are open source should ensure that developers can’t include malicious code in the programs, because anyone can inspect the source code for malware. In practice, however, the number of people with enough expertise to do this is limited, while the reliance by software in general on external code libraries, or dependencies, makes it even harder.
+Теоретически тот факт, что большинство биткоин-узлов, кошельков и приложений имеют открытый исходный код, должен гарантировать, что разработчики не смогут включать вредоносный код в программы, потому что любой может проверить исходный код на наличие вредоносных программ. На практике, однако, количество людей, обладающих достаточным опытом для этого, ограничено, а зависимость программного обеспечения в целом от внешних библиотек кода еще больше усложняет задачу.
 
-Furthermore, even if the open source code is sound, this doesn’t guarantee that the binaries (computer code) really correspond with the open source code. The first attempt at mitigating this risk in Bitcoin involved a process called Gitian building. This is where several Bitcoin Core developers sign the binaries if, and only if, they all produce the exact same binaries from the same source code. This requires special compiler software.
+Кроме того, даже если открытый исходный код надежен, это не гарантирует, что двоичные файлы (компьютерный код) действительно соответствуют открытому исходному коду. Первая попытка снизить этот риск для Биткоина включала процесс, называемый Git-сборкой. Несколько разработчиков Bitcoin Core подписывают двоичные файлы на Git, если и только если все они получили одни и те же двоичные файлы из одного и того же исходного кода. Для этого требуются специализированные компиляторы.
 
-More recently, Guix, a project that goes above and beyond the Gitian process, came along. It helped minimize the level of trust required to turn source code into binaries — including trust in the compiler itself.
+Совсем недавно появился Guix, проект, выходящий за рамки процесса Git-сборки. Это помогло свести к минимуму уровень доверия, необходимый для преобразования исходного кода в двоичные файлы, включая доверие к самому компилятору.
 
 ### Free vs. Open Source
 
