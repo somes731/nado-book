@@ -10,9 +10,13 @@
 
 Before getting into the details of Gitian and Guix, this section serves as a brief primer on the historical difference between free software and open source software and how they were combined into FOSS (free and open-source software).
 
-The idea behind the free software movement is that if software is closed source, it results in a power relationship between developers and users, because users don’t know what software they’re running.
+Перед тем, как перейти к деталям Git-сборки и Guix, в этом разделе кратко рассмотрим историческую разницу между свободным программным обеспечением и программным обеспечением с открытым исходным кодом и тем, как они были объединены в FOSS (бесплатное программное обеспечение с открытым исходным кодом).
+
+Идея, лежащая в основе движения за свободное программное обеспечение, заключается в том, что если программное обеспечение имеет закрытый исходный код, это приводит к отношениям власти разработчиков над пользователями, потому что пользователи не знают, какое программное обеспечение они используют.
 
 The actual software as it’s read by your computer is written in a language no human can understand, a binary format made up of ones and zeros. But when humans wrote that software, they used a programming language, such as C++. These two aren’t the same thing, even if most mortals can’t read either. So when you’re running closed software, all you have access to is this binary, not the programming language used to produce it. As a result, you have no idea what your computer is doing.
+
+В том виде, в котором софт читается вашим компьютером, он написан на языке, который не может понять человек, в двоичном формате, состоящем из единиц и нулей. Но когда люди писали этот софт, они использовали язык программирования, такой как C++. Это не одно и то же, даже если большинство смертных тоже не умеют его читать. Поэтому, когда вы используете закрытое программное обеспечение, все, к чему у вас есть доступ, — это этот двоичный файл, а не язык программирования, используемый для его создания. В результате вы понятия не имеете, что делает ваш компьютер.
 
 So, for example, if a developer puts malware into the closed software, your computer could spy on you or do something you don’t actually want the software to do, and you wouldn’t be able to see it.
 
