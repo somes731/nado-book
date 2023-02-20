@@ -26,34 +26,30 @@
 
 Теперь вопрос в том, как все это относится к Биткоину. Вот пример. Когда вы запускаете приложение кошелька, оно отображает адрес. Что, если окажется, что адрес принадлежит не вам, а контролируется разработчиком? Тогда каждый раз, когда кто-то платит вам, монеты достаются не вам. Вот почему вам действительно нужна максимальная прозрачность того, что именно работает на вашей машине.
 
-One thing you can do, if you have the skill, is to compile the wallet software yourself, thereby avoiding the need to download an untrusted binary. That doesn’t solve the problem for the vast majority of users though. It also doesn’t entirely solve the problem for you, because even if you can see the code in its original programming language, it’s hard to understand exactly what it’s going to do once it runs on your computer. For one thing, it’s simply too much code for one person to understand.
-
 Если у вас есть навыки, вы можете сделать одну понятную вещь — скомпилировать программу для кошелька самостоятельно, тем самым избегая необходимости загружать ненадежный двоичный файл. Однако для подавляющего большинства пользователей это не решает проблему. Это также не решит для вас проблему полностью, потому что, даже если вы видите код на его исходном языке программирования, трудно точно понять, что он будет делать после запуска на вашем компьютере. Во-первых, тут просто слишком много кода, чтобы его мог понять один человек.
 
 Вот почему вам важно, чтобы любой запускаемый код Биткоина имел открытые исходники, и тогда как можно больше людей могли бы видеть, что это за код. Помните, что если обеспечить достаточно глаз, все баги будут мелкими, и то же самое касается обнаружения вредоносных фрагментов кода.
 
 Код Биткоина имеет открытые исходники и размещен на GitHub в репозитории. Это означает, что любой, у кого есть ноу-хау, может посмотреть исходный код и убедиться, что он делает то, что должен делать. Но на самом деле количество людей, которые действительно могут это сделать и понять, ограничено. ^ [Количество людей, которые могут прочитать этот код, зависит от того, что вы подразумеваете под словом "прочитать". Сколько людей вообще умеет что-то прочесть на компьютере? Сколько человек может приблизительно понять, что делает программа на C++? Вероятно, десятки миллионов (<https://redmonk.com/jgovernor/2017/05/26/just-how-many-darned-developers-are-there-in-the-world-github-is-puzzled/>). Но из них, возможно, только несколько тысяч когда-либо работали в сфере криптовалют или чего-то подобного. Каждый день десятки активных разработчиков отсматривают код. Но никто из них не может контролировать все изменения во всем проекте, потому что это требует специализации: например, один разработчик может знать все о коде одноранговой сети и абсолютно ничего о коде кошелька.] Хотя иногда они даже получают некоторую помощь от разработчиков, которые работают с альткоинами. ^ [Например, очень серьезный баг CVE-2018-17144 был обнаружен разработчиком Bitcoin Cash с ником Awemany (<https://bitcoinops.org/en/topics/cve-2018-17144/>). Многие проекты альткоинов начинались с копипастинга исходного кода Биткоина, с последующим изменением нескольких вещей, чтобы выделиться. Например, Dogecoin изменил график инфляции, уменьшил время между блоками и использовал другой алгоритм proof-of-work. Но при этом 99% его кодовой базы остается идентичной Bitcoin Core: цифровые подписи проверяются таким же образом, транзакции и блоки проверяются таким же образом, одноранговая сеть работает так же и т. д. Поэтому, когда разработчики альткоинов работают над своими проектами, они могут обнаружить ошибки в тех 99% кода, которые они используют совместно с Bitcoin Core. Это повышает безопасность Биткоина.]
 
-If we wanted to increase the number of people who could read and understand Bitcoin source code, it’d need to be cleaner and more readable, because the original code Satoshi wrote was very, very hard to reason about.^[To understand what it means to reason about something, imagine you’re looking at code and you see there’s a function called “make a private key.” Your line of thinking might go as follows: “OK, what does that function do? Oh, it calls in this other function. Where’s that other function? Oh, it’s 20,000 lines up in the same file. Let me scroll 20,000 lines up and have a look at that code. I see, it’s referring to a variable. Oh, but this variable is also accessed in 15 different places in the codebase…”]
-
 Если мы хотим увеличить количество людей, которые могли бы читать и понимать исходный код Биткоина, он должен быть как можно чище и читабельнее, потому что исходный код, написанный Сатоши, было очень, очень трудно понять. ^ [Чтобы понять, что означает подобное понимание, представьте, что вы смотрите на код и видите, что есть функция под названием «создать закрытый ключ». Ход ваших мыслей может быть таким: «Хорошо, что делает эта функция? О, она вызывает вот эту другую функцию. Где еще эта функция? О, она двадцатью тысячами строк выше в этом же файле. Давайте-ка прокрутим на 20 000 строк вверх и посмотрим на ее код. Ага, я вижу, что она обращается к переменной. Ну вот, а к этой переменной идут обращения еще из 15 разных мест в коде…»]
 
-### Checking the Validity
+### Проверка валидности
 
-Let’s say you trust the development and release process, so you download the binary from bitcoincore.org. The first problem is that you don’t know if bitcoincore.org is run by the Bitcoin developers. But even if you were confident of that, it could be that the site is hacked, or the site isn’t hacked, but the DNS is hacked. There are many ways in which you could end up downloading malware.
+Допустим, вы доверяете процессу разработки и выпуска ПО, поэтому загружаете двоичный файл с сайта bitcoincore.org. Первая проблема заключается в том, что вы не знаете, управляется ли bitcoincore.org разработчиками Биткоина. Но даже если бы вы были в этом уверены, может оказаться, что сайт взломан, или не сайт, а DNS. Есть много способов, которыми вы можете в конечном итоге загрузить вредоносное ПО.
 
-To get around this, open source projects almost always publish a checksum, which is a sequence of numbers and letters. What this means is that if you download something and run a particular script on it, the resulting checksum you get should match what the developers say it should be. The project maintainer usually publishes the checksum on the download page. In theory, that works. However, whoever hacked the site might have also hacked the checksum, so it’s not foolproof.
+Чтобы обойти эту проблему, проекты с открытым исходным кодом почти всегда публикуют контрольную сумму, которая представляет собой буквенно-цифровую последовательность. Это означает, что если вы загружаете файл и пропускаете его через нужный скрипт, полученная вами контрольная сумма должна совпадать с той, которую называют разработчики. Куратор проекта обычно публикует контрольную сумму на странице загрузки. Теоретически это работает. Однако тот, кто взломал сайт, мог взломать и контрольную сумму, так что это не слишком надежно.
 
-The next step is to sign the checksum. So, for example, a well-known person — in this case, Wladimir van der Laan, the (Dutch) lead maintainer^[Maintainers aren’t as powerful as some people think they are: <https://blog.lopp.net/who-controls-bitcoin-core-/>\
-Also, as of recently, multiple developers sign the release checksum.] of Bitcoin Core — signs the checksum using a PGP key that’s publicly known. It’s been the same for 10 years. So assuming you weren’t fooled the first time, whenever you download an updated version, you know which PGP key the checksums ought to be signed with.
+Следующий шаг - это подписывание контрольной суммы. Так, например, известный человек — в данном случае Владимир ван дер Лаан, ведущий (голландский) куратор проекта^[Такие кураторы не настолько сильны, как думают некоторые: <https://blog.lopp.net/who-controls-bitcoin-core-/>\
+Кроме того, в последнее время контрольную сумму релиза подписывает несколько разработчиков.] Bitcoin Core — подписывает контрольную сумму, используя общеизвестный ключ PGP. Этот ключ не менялся уже 10 лет. Итак, если вас не обманули в первый раз, всякий раз, когда вы загружаете обновленную версию, вы знаете, каким ключом PGP должны быть подписаны контрольные суммы.
 
-Why trust him? Well, he knows the binaries reflect the open source code because he took the source code, ran a command, and got the binary. In other words, he put the code through some other piece of software that produces binaries from the open source software.
+Зачем ему доверять? Ну, он знает, что двоичные файлы отражают открытый исходный код, потому что он взял исходный код, выполнил команду и получил двоичный файл. Другими словами, он пропустил код через какое-то другое программное обеспечение, которое создает двоичные файлы из открытого исходного кода.
 
-But how do you know he actually did that? Here’s where it gets a little bit more complicated. Ideally, what you do is you run the same command and you also compile it, and then hopefully, you get the same result.
+Но откуда вы знаете, что он действительно это сделал? Вот тут все становится немного сложнее. В идеале вы запускаете ту же команду и точно так же компилируете код, а затем, надеюсь, получаете тот же результат.
 
-Sometimes that works with a specific project, but as the project gets complicated, it often doesn’t work, because what the exact binary file is going to be depends on some very specific details on your computer system.
+Иногда это работает с конкретным проектом, но по мере усложнения проекта это часто перестает работать, поскольку то, каким будет точный двоичный файл, зависит от некоторых очень специфических деталей вашей компьютерной системы.
 
-Take a trivial C++ program:
+Возьмем тривиальную программу на C++
 
 ```
 int main() {
@@ -61,27 +57,27 @@ int main() {
 }
 ```
 
-This program exits and returns `0`. It’s more boring than “Hello, World!”^[<https://en.wikipedia.org/wiki/%22Hello,_World!%22_program>]
+Эта программа завершается и возвращает `0`, что даже более скучно, чем “Hello, World!”^[<https://en.wikipedia.org/wiki/%22Hello,_World!%22_program>]
 
-Say you compile this on a Mac and it produces a 16,536-byte program. When you repeat that on a different Mac, it produces an identical file, as evidenced by its SHA-256^[<https://en.wikipedia.org/wiki/SHA-2>] checksum. But when you compile it on an Ubuntu machine, you get a 15,768-byte result.
+Скажем, вы скомпилировали этот код на Mac и получили программу размером 16536 байт. Когда вы повторяете это на другом Mac, он создает идентичный файл, о чем свидетельствует его контрольная сумма SHA-256^[<https://en.wikipedia.org/wiki/SHA-2>]. Но когда вы скомпилируете его на машине с Ubuntu, вы получите результат размером 15768 байт.
 
-All it takes is one changed letter in a computer program, or in its compiled binary, and boom, your checksum doesn’t work anymore.
+Достаточно одной измененной буквы в компьютерной программе или в ее скомпилированном бинарнике - и вжух! - ваша контрольная сумма больше не работает.
 
-If the compiled program includes a library (see chapter @sec:libsecp), then the end result depends on the exact library version that happened to be on the developer machine when they created the binary.
+Если скомпилированная программа включает библиотеку (см. главу @sec:libsecp), то конечный результат зависит от точной версии библиотеки, которой довелось стоять на машине разработчиков, когда они создавали двоичный файл.
 
-So when you download the latest Bitcoin Core from its website and you compare it to what you compiled yourself, it’s going to have a different checksum. Perhaps the difference is due to you having a more recent version of some library, or perhaps it’s due to a subtle difference between your system and Wladimir’s.
+Поэтому, когда вы загружаете последнюю версию Bitcoin Core с официального сайта и сравниваете ее с тем, что вы скомпилировали самостоятельно, у нее окажется другая контрольная сумма. Возможно, разница связана с тем, что у вас более поздняя версия какой-то библиотеки, или, возможно, это связано с небольшим различием между вашей системой и системой Владимира.
 
-As mentioned above, if you’re one of those lucky people who can compile code yourself, this isn’t a big deal. What’s more likely, however, is that your security depends on the hope that somebody else will do this check for you. Those people might then sound the alarm if anything is wrong.
+Как упоминалось выше, если вы один из тех счастливчиков, которые могут самостоятельно компилировать код, это не имеет большого значения. Однако более вероятно, что ваша безопасность зависит от надежды на то, что кто-то другой сделает эту проверку за вас. Эти люди могут поднять тревогу, если что-то не так.
 
-But because it’s so difficult to check if the source code matches the downloadable binary, should you really assume that anyone out there does this?
+Но так как очень сложно проверить, соответствует ли исходный код загружаемому двоичному файлу, должны ли вы действительно предполагать, что кто-то там и впрямь этим занимается?
 
-### Fixing the Problem with Gitian
+### Исправление проблемы с Gitian
 
-In order to verify no shenanigans happened in the process of converting source code to a compiled binary, you need something called reproducible builds, or deterministic builds.
+Чтобы убедиться, что в процессе преобразования исходного кода в скомпилированный двоичный файл не произошло каких-либо махинаций, вам нужно нечто, называемое воспроизводимыми, или детерминированными, сборками.
 
-What deterministic implies is that, given a source, you’re going to get the same binary. And if you change one letter in the source, you’re going to get a different binary, but everybody will get the same result if they make the same change.
+Детерминистический подход подразумевает, что при заданном источнике вы получите один и тот же двоичный файл. И если вы измените одну букву в исходном коде, вы получите другой двоичный код, но все получат одинаковый результат, если сделают одно и то же изменение.
 
-In addition, there’s the problem of slight differences in machine configuration leading to a different binary file.
+Кроме того, существует проблема небольших различий в конфигурации машины, приводящих к появлению другого двоичного файла.
 
 Until mid 2021, the way Bitcoin Core did this was with Gitian.^[<https://gitian.org/>] In short, you’d take a virtual or physical computer, download the installation DVD^[Long ago you might have ordered a CD by snail mail, whereas nowadays, you’ll probably download an image and put it on a USB stick. When you install Ubuntu on a virtual machine, your computer creates a virtual DVD player using the image. <https://ubuntu.com/download/server>] for a very specific Ubuntu version, and install that. This ensures everyone has an identical starting position, and because Ubuntu is widely used, there’s some confidence that there isn’t a Bitcoin backdoor on the installation disk.
 
