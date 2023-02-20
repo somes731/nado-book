@@ -71,7 +71,7 @@ int main() {
 
 Но так как очень сложно проверить, соответствует ли исходный код загружаемому двоичному файлу, должны ли вы действительно предполагать, что кто-то там и впрямь этим занимается?
 
-### Исправление проблемы с Gitian
+### Решение проблемы при помощи Git-сборки
 
 Чтобы убедиться, что в процессе преобразования исходного кода в скомпилированный двоичный файл не произошло каких-либо махинаций, вам нужно нечто, называемое воспроизводимыми, или детерминированными, сборками.
 
@@ -79,13 +79,13 @@ int main() {
 
 Кроме того, существует проблема небольших различий в конфигурации машины, приводящих к появлению другого двоичного файла.
 
-Until mid 2021, the way Bitcoin Core did this was with Gitian.^[<https://gitian.org/>] In short, you’d take a virtual or physical computer, download the installation DVD^[Long ago you might have ordered a CD by snail mail, whereas nowadays, you’ll probably download an image and put it on a USB stick. When you install Ubuntu on a virtual machine, your computer creates a virtual DVD player using the image. <https://ubuntu.com/download/server>] for a very specific Ubuntu version, and install that. This ensures everyone has an identical starting position, and because Ubuntu is widely used, there’s some confidence that there isn’t a Bitcoin backdoor on the installation disk.
+До середины 2021 года Bitcoin Core делал это с помощью Git-сборки.^[<https://gitian.org/>] Если вкратце, то вы брали виртуальный или физический компьютер, загружали установочный DVD^[Давным-давно вы могли заказать компакт-диск обычной почтой, тогда как сейчас вы, вероятно, загрузите образ и поместите его на USB-накопитель. Когда вы устанавливаете Ubuntu на виртуальную машину, ваш компьютер создает виртуальный DVD-плеер, используя образ. <https://ubuntu.com/download/сервер>] с конкретной версией Ubuntu и устанавливали ее. Это гарантировало, что у всех будет одинаковая начальная позиция, а поскольку Ubuntu широко используется, есть некоторая уверенность в том, что на установочном диске нет биткоин-бэкдора.
 
-Inside that machine, you build another virtual machine, which has been tailormade to ensure it builds identical binaries for everyone using it. For example, it uses a fixed fake time so that if a timestamp ends up in the final binary, it’s going to be the same timestamp no matter what time you ran the compiler. It ensures all the libraries are the exact same versions, it uses a very specific compiler version, etc. And then you build Bitcoin Core inside that virtual machine and look at the checksum. This should now match the downloadable files on bitcoincore.org.
+Внутри этой машины вы создаете еще одну виртуальную машину, которая была спроектирована специально для того, чтобы гарантировать, что она создает идентичные двоичные файлы для всех, кто ее использует. Например, она использует фиксированное фальшивое время, так что если в финальный двоичный файл попадает временная метка, она будет одинаковой независимо от того, в какое время вы запускали компилятор. Она гарантирует, что все библиотеки имеют одинаковые версии, использует очень специфическую версию компилятора и т. д. Затем вы создаете Bitcoin Core внутри этой виртуальной машины и смотрите на контрольную сумму. Теперь она должна соответствовать загружаемым с bitcoincore.org файлам.
 
-About a dozen developers and other volunteers run this “computer within a computer.” Around each new released version, they all compile the binaries and publish the resulting hashes for others to see. In addition, they sign these hashes with their public PGP keys.
+Около дюжины разработчиков и других добровольцев запускали этот «компьютер внутри компьютера». Вокруг каждой новой выпущенной версии они компилировали двоичные файлы и публиковали полученные хэши для просмотра другими. Кроме того, они подписывали эти хэши своими открытыми ключами PGP.
 
-However, while this sounds easy in theory, in practice, it’s always been a huge pain to get the system working. There aren’t many open source projects that use Gitian — as far as we know, only Bitcoin Core and Tor do. Even most, if not all, altcoin forks of the Bitcoin Core software don’t bother with this process.
+Однако, хотя в теории это звучит просто, на практике заставить систему работать всегда было очень сложно. Существует не так много проектов с открытым исходным кодом, которые используют Gitian — насколько нам известно, только Bitcoin Core и Tor. Даже большая часть альткоин-форков Bitcoin Core не заморачиваются этим процессом.
 
 ### Dependencies, Dependencies, Dependencies
 
