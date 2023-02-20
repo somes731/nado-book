@@ -87,27 +87,27 @@ int main() {
 
 Однако, хотя в теории это звучит просто, на практике заставить систему работать всегда было очень сложно. Существует не так много проектов с открытым исходным кодом, которые используют Gitian — насколько нам известно, только Bitcoin Core и Tor. Даже большая часть альткоин-форков Bitcoin Core не заморачиваются этим процессом.
 
-### Dependencies, Dependencies, Dependencies
+### Зависимости, зависимости, зависимости
 
-However, this isn’t the only problem.
+Однако это не единственная проблема.
 
-Let’s say you just read the Facebook terms and conditions, but it turns out those terms and conditions point to some other document — perhaps the entirety of US copyright law. So now you have to read that too.
+Допустим, вы только что прочитали положения и условия Facebook, но оказалось, что эти положения и условия указывают на какой-то другой документ — возможно, на весь корпус законов США о копирайте. Так что теперь вы должны прочитать и его тоже.
 
-Similarly, just reviewing the Bitcoin Core code isn’t enough, because like most computer programs, it uses all sorts of other things, known as dependencies, mostly in the form of libraries (see chapter @sec:libsecp). And each library might in turn use some other library, and so forth and so on. So you need to inspect all of those too.
+Точно так же недостаточно просто просмотреть код Bitcoin Core, потому что, как и большинство компьютерных программ, он использует всевозможные другие вещи, известные как зависимости, в основном в виде библиотек (см. главу @sec:libsecp). И каждая библиотека, в свою очередь, может использовать какую-то другую библиотеку, и так далее, и тому подобное. Так что теперь вам нужно проверить их все.
 
-One of the constraints Bitcoin Core developers work with is to keep the number of dependencies as small as possible, and also to not update them all the time. Such updates require extra review work. And of course, the people who maintain those dependencies know Bitcoin Core is using them; all the more reason to be somewhat on your toes to make sure that those projects are being scrutinized, too.
+Одно из самоограничений, принятых разработчиками Bitcoin Core - это сохранение как можно меньшего количества зависимостей, а также отказ от их постоянного обновления. Такие обновления требуют дополнительной проверки. И, конечно же, люди, которые поддерживают эти зависимости, знают, что Bitcoin Core их использует; тем больше причин быть в напряжении, чтобы убедиться, что эти проекты также тщательно проверяются.
 
-And if it turns out that a dependency is corrupt, it could steal your coins. This actually happened in at least one other project in 2018. It involved a dependency of a dependency of a dependency of the Copay wallet. Fortunately, it was detected quickly,^[What happened was they had a piece of software that’s open source, meaning everybody could review it. But it used dependencies, and those dependencies used dependencies, and so on.
+И если окажется, что зависимость работает некорректно, она может украсть ваши монеты. Это действительно произошло по крайней мере в одном другом проекте в 2018 году. Проблема была связана с зависимостью зависимости от зависимости кошелька Copay. К счастью, ее быстро обнаружили,^[Вышло так, что у них был фрагмент программного обеспечения с открытым исходным кодом, что означает, что каждый мог проверить его. Но он использовал зависимости, а эти зависимости использовали зависимости и так далее.
 \
-They were using npm, which is the package manager for Node.js. This is, in turn, a large open source community, and it’s a highly modular system.
+Они использовали npm, менеджер пакетов для Node.js. Это, в свою очередь, проект большого опенсорсного сообщества и весьма модульная система.
 \
-Every single package links to a repository on GitHub, with its own maintainer who can release updates whenever they want. A typical piece of wallet software might be pulling in 10,000 dependencies indirectly. You might start with five dependencies, and each of those pull in 50 dependencies, and those each pull in another 50 dependencies. If even a single one of the developers or maintainers of any of these packages is corrupted, they could include coin-stealing malware.
+Каждый отдельный пакет ссылается на репозиторий на GitHub со своим куратором, который может в любое время выпускать обновления. Типичный фрагмент кода кошелька может косвенно привлекать до 10 000 зависимостей. Вы можете начать с пяти зависимостей, и каждая из них подтянет 50 зависимостей, а каждая из них подтянет еще 50 зависимостей. Если хотя бы один из разработчиков или кураторов любого из этих пакетов злонамерен, он смогут включить в код вредоносное ПО для кражи монет.
 \
-A JavaScript wallet like Copay stores a user’s private keys somewhere inside the browser memory. Unfortunately, that’s a very egalitarian place, meaning that any piece of JavaScript can access it. This is how malware hidden in a sub-sub-dependency can steal coins.
+JavaScript-кошелек, такой как Copay, хранит закрытые ключи пользователя где-то в памяти браузера. К сожалению, это очень эгалитарное место, а это означает, что любой фрагмент кода на JavaScript может получить к нему доступ. Именно так вредоносное ПО, скрытое в подподзависимости, и может украсть монеты.
 \
-For more information, see this writeup: <https://www.synopsys.com/blogs/software-security/malicious-dependency-supply-chain/>] so it was never exploited in the wild.
+Для получения дополнительной информации см. эту статью: <https://www.synopsys.com/blogs/software-security/malicious-dependency-supply-chain/>] так что багом так никто и не воспользовался.
 
-A more recent example of casual dependency usage gone horribly wrong is the Log4j saga.^[<https://english.ncsc.nl/topics/log4j-vulnerability>]
+Более недавний пример случайного использования зависимостей, который пошел ужасно неправильно - это сага о Log4j.^[<https://english.ncsc.nl/topics/log4j-vulnerability>]
 
 ### The Solution
 
